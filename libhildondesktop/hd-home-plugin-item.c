@@ -618,7 +618,8 @@ hd_home_plugin_item_get_dbus_g_connection (HDHomePluginItem  *item,
  *     {
  *       g_source_remove (timer_source);
  *       timer_source = 0;
- *     }]|
+ *     }
+ * ]|
  * in the dispose or finalize function.</para></note>
  *
  * It is wise to have maxtime-mintime quite big so all users of this service get synced.
