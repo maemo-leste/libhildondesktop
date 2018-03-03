@@ -241,7 +241,7 @@ hd_plugin_module_new_object (HDPluginModule *module,
 
   if (module->priv->gtypes != NULL)
     {
-      GType type = GPOINTER_TO_INT (module->priv->gtypes->data);
+      GType type = GPOINTER_TO_SIZE (module->priv->gtypes->data);
 
       if (g_type_is_a (type, HD_TYPE_PLUGIN_ITEM))
         return g_object_new (type,
@@ -289,5 +289,5 @@ hd_plugin_module_add_type (HDPluginModule *module,
                     dl_filename_quark,
                     g_strdup (module->priv->path));
 
-  module->priv->gtypes = g_list_append (module->priv->gtypes, GINT_TO_POINTER (type));
+  module->priv->gtypes = g_list_append (module->priv->gtypes, GSIZE_TO_POINTER (type));
 }
