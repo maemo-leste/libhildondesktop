@@ -1,3 +1,9 @@
+libhildondesktop (2.1.44) unstable; urgency=medium
+
+  * GType is not 32 bit on 64 bit system [Ivaylo Dimitrov]
+
+ -- Ivan J. <parazyd@dyne.org>  Sat, 03 Mar 2018 16:17:00 +0100
+
 libhildondesktop (2.1.43) unstable; urgency=medium
 
   * enable git builds
