@@ -31,15 +31,13 @@
 
 #include "hd-plugin-loader-default.h"
 
-#define HD_PLUGIN_LOADER_DEFAULT_GET_PRIVATE(obj) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), HD_TYPE_PLUGIN_LOADER_DEFAULT, HDPluginLoaderDefaultPrivate))
-
-G_DEFINE_TYPE (HDPluginLoaderDefault, hd_plugin_loader_default, HD_TYPE_PLUGIN_LOADER);
-
 struct _HDPluginLoaderDefaultPrivate 
 {
   GHashTable *registry;
 };
+
+G_DEFINE_TYPE_WITH_CODE (HDPluginLoaderDefault, hd_plugin_loader_default, HD_TYPE_PLUGIN_LOADER, G_ADD_PRIVATE(HDPluginLoaderDefault));
+
 
 static GObject * 
 hd_plugin_loader_default_open_module (HDPluginLoaderDefault  *loader,
@@ -175,7 +173,7 @@ hd_plugin_loader_default_finalize (GObject *loader)
 static void
 hd_plugin_loader_default_init (HDPluginLoaderDefault *loader)
 {
-  loader->priv = HD_PLUGIN_LOADER_DEFAULT_GET_PRIVATE (loader);
+  loader->priv = (HDPluginLoaderDefaultPrivate*)hd_plugin_loader_default_get_instance_private(loader);
 
   loader->priv->registry = g_hash_table_new_full (g_str_hash, 
                                                   g_str_equal,
@@ -195,6 +193,4 @@ hd_plugin_loader_default_class_init (HDPluginLoaderDefaultClass *class)
   object_class->finalize = hd_plugin_loader_default_finalize;
 
   loader_class->load = hd_plugin_loader_default_load;
-
-  g_type_class_add_private (object_class, sizeof (HDPluginLoaderDefaultPrivate));
 }
