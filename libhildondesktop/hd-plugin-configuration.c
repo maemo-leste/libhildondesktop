@@ -35,9 +35,6 @@
 
 #include "hd-plugin-configuration.h"
 
-#define HD_PLUGIN_CONFIGURATION_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_PLUGIN_CONFIGURATION, HDPluginConfigurationPrivate))
-
 #define HD_PLUGIN_CONFIGURATION_CONFIG_GROUP                    "X-PluginManager"
 #define HD_PLUGIN_CONFIGURATION_CONFIG_KEY_DEBUG_PLUGINS        "X-Debug-Plugins"
 #define HD_PLUGIN_CONFIGURATION_CONFIG_KEY_LOAD_ALL_PLUGINS     "X-Load-All-Plugins"
@@ -90,7 +87,7 @@ static guint plugin_configuration_signals [LAST_SIGNAL] = { 0 };
  * 
  **/
 
-G_DEFINE_TYPE (HDPluginConfiguration, hd_plugin_configuration, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDPluginConfiguration, hd_plugin_configuration, G_TYPE_OBJECT, G_ADD_PRIVATE(HDPluginConfiguration));
 
 static void
 hd_plugin_configuration_remove_plugin_module (HDPluginConfiguration *configuration,
@@ -168,7 +165,7 @@ hd_plugin_configuration_init (HDPluginConfiguration *configuration)
   HDPluginConfigurationPrivate *priv;
 
   /* Get private structure */
-  configuration->priv = HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
+  configuration->priv = (HDPluginConfigurationPrivate*)hd_plugin_configuration_get_instance_private(configuration);
   priv = configuration->priv;
 
   priv->startup = TRUE;
@@ -491,8 +488,6 @@ hd_plugin_configuration_class_init (HDPluginConfigurationClass *klass)
   g_object_class->finalize = hd_plugin_configuration_finalize;
   g_object_class->get_property = hd_plugin_configuration_get_property;
   g_object_class->set_property = hd_plugin_configuration_set_property;
-
-  g_type_class_add_private (g_object_class, sizeof (HDPluginConfigurationPrivate));
 
   g_object_class_install_property (g_object_class,
                                    PROP_CONF_FILE,
