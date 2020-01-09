@@ -36,9 +36,6 @@
 /* use config dir (~/.config/hildon-desktop) */
 #define HD_DESKTOP_USER_CONFIG_PATH "hildon-desktop"
 
-#define HD_CONFIG_FILE_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_CONFIG_FILE, HDConfigFilePrivate))
-
 enum
 {
   PROP_0,
@@ -67,7 +64,7 @@ struct _HDConfigFilePrivate
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
-G_DEFINE_TYPE (HDConfigFile, hd_config_file, G_TYPE_INITIALLY_UNOWNED);
+G_DEFINE_TYPE_WITH_CODE (HDConfigFile, hd_config_file, G_TYPE_INITIALLY_UNOWNED, G_ADD_PRIVATE(HDConfigFile));
 
 static void
 hd_config_file_monitored_dir_changed (GFileMonitor      *monitor,
@@ -258,8 +255,6 @@ hd_config_file_class_init (HDConfigFileClass *klass)
   g_object_class->get_property = hd_config_file_get_property;
   g_object_class->set_property = hd_config_file_set_property;
 
-  g_type_class_add_private (g_object_class, sizeof (HDConfigFilePrivate));
-
   g_object_class_install_property (g_object_class,
                                    PROP_SYSTEM_CONF_DIR,
                                    g_param_spec_string ("system-conf-dir",
@@ -294,7 +289,7 @@ hd_config_file_class_init (HDConfigFileClass *klass)
 static void
 hd_config_file_init (HDConfigFile *config_file)
 {
-  config_file->priv = HD_CONFIG_FILE_GET_PRIVATE (config_file);
+  config_file->priv = (HDConfigFilePrivate*)hd_config_file_get_instance_private(config_file);
 
   config_file->priv->system_conf_monitor = NULL;
   config_file->priv->system_conf_file = NULL;
