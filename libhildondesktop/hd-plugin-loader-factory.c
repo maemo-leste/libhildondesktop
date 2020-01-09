@@ -42,11 +42,6 @@
 #define MODULE_LOAD_SYMBOL 	   "hd_plugin_loader_module_type"
 #define MODULE_GET_INSTANCE_SYMBOL "hd_plugin_loader_module_get_instance"
 
-#define HD_PLUGIN_LOADER_FACTORY_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_PLUGIN_LOADER_FACTORY, HDPluginLoaderFactoryPrivate))
-
-G_DEFINE_TYPE (HDPluginLoaderFactory, hd_plugin_loader_factory, G_TYPE_OBJECT);
-
 struct _HDPluginLoaderFactoryPrivate 
 {
   GHashTable   *registry;
@@ -57,6 +52,9 @@ struct _HDPluginLoaderFactoryPrivate
   gchar 	  *(*load_module)   (void);
   HDPluginLoader  *(*get_instance)  (void);
 };
+
+G_DEFINE_TYPE_WITH_CODE (HDPluginLoaderFactory, hd_plugin_loader_factory, G_TYPE_OBJECT, G_ADD_PRIVATE(HDPluginLoaderFactory));
+
 
 static int callback_pending = 0;
 
@@ -184,7 +182,7 @@ hd_plugin_loader_factory_load_modules (HDPluginLoaderFactory *factory)
 static void
 hd_plugin_loader_factory_init (HDPluginLoaderFactory *factory)
 {
-  factory->priv = HD_PLUGIN_LOADER_FACTORY_GET_PRIVATE (factory);
+  factory->priv = (HDPluginLoaderFactoryPrivate*)hd_plugin_loader_factory_get_instance_private(factory);
 
   factory->priv->registry =
     g_hash_table_new_full (g_str_hash, 
@@ -246,8 +244,6 @@ hd_plugin_loader_factory_class_init (HDPluginLoaderFactoryClass *class)
   GObjectClass *g_object_class = (GObjectClass *) class;
 
   g_object_class->finalize = hd_plugin_loader_factory_finalize;
-
-  g_type_class_add_private (g_object_class, sizeof (HDPluginLoaderFactoryPrivate));
 }
 
 GObject *
