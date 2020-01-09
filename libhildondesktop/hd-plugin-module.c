@@ -34,8 +34,6 @@
 #define HD_PLUGIN_MODULE_GET_PRIVATE(object) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_PLUGIN_MODULE, HDPluginModulePrivate))
 
-G_DEFINE_TYPE (HDPluginModule, hd_plugin_module, G_TYPE_TYPE_MODULE);
-
 enum
 {
   PROP_0,
@@ -52,6 +50,9 @@ struct _HDPluginModulePrivate
   void     (*load)     (HDPluginModule *plugin);
   void     (*unload)   (HDPluginModule *plugin);
 };
+
+G_DEFINE_TYPE_WITH_CODE (HDPluginModule, hd_plugin_module, G_TYPE_TYPE_MODULE, G_ADD_PRIVATE(HDPluginModule));
+
 
 static void hd_plugin_module_get_property (GObject *object,
                                            guint prop_id,
@@ -83,8 +84,6 @@ hd_plugin_module_class_init (HDPluginModuleClass *class)
   type_module_class->load   = hd_plugin_module_load;
   type_module_class->unload = hd_plugin_module_unload;
 
-  g_type_class_add_private (object_class, sizeof (HDPluginModulePrivate));
-
   g_object_class_install_property (object_class,
                                    PROP_PATH,
                                    g_param_spec_string("path",
@@ -97,7 +96,7 @@ hd_plugin_module_class_init (HDPluginModuleClass *class)
 static void
 hd_plugin_module_init (HDPluginModule *plugin)
 {
-  plugin->priv = HD_PLUGIN_MODULE_GET_PRIVATE (plugin);
+  plugin->priv = (HDPluginModulePrivate*)hd_plugin_module_get_instance_private(plugin);
 
   plugin->priv->gtypes = NULL;
 
