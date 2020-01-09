@@ -33,9 +33,6 @@
  * A notification received by org.freedesktop.Notifications.Notify.
  **/
 
-#define HD_NOTIFICATION_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_NOTIFICATION, HDNotificationPrivate))
-
 enum
 {
   PROP_0,
@@ -75,7 +72,7 @@ struct _HDNotificationPrivate
   gboolean closed : 1;
 };
 
-G_DEFINE_TYPE (HDNotification, hd_notification, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDNotification, hd_notification, G_TYPE_OBJECT, G_ADD_PRIVATE(HDNotification));
 
 static void
 hd_notification_dispose (GObject *object)
@@ -297,14 +294,12 @@ hd_notification_class_init (HDNotificationClass *klass)
                                                         "The sender of the notification",
                                                         NULL,
                                                         G_PARAM_READWRITE));
-
-  g_type_class_add_private (klass, sizeof (HDNotificationPrivate));
 }
 
 static void
 hd_notification_init (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = HD_NOTIFICATION_GET_PRIVATE (notification);
+  HDNotificationPrivate *priv = (HDNotificationPrivate*)hd_notification_get_instance_private(notification);
 
   notification->priv = priv;
 }
