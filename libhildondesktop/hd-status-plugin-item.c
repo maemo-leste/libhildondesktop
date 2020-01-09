@@ -51,9 +51,6 @@
  * connections.
  **/
 
-#define HD_STATUS_PLUGIN_ITEM_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_STATUS_PLUGIN_ITEM, HDStatusPluginItemPrivate))
-
 static void hd_status_plugin_item_init_plugin_item (gpointer g_iface);
 
 enum
@@ -77,6 +74,7 @@ struct _HDStatusPluginItemPrivate
 };
 
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (HDStatusPluginItem, hd_status_plugin_item, GTK_TYPE_BIN,
+                                  G_ADD_PRIVATE(HDStatusPluginItem)
                                   G_IMPLEMENT_INTERFACE (HD_TYPE_PLUGIN_ITEM,
                                                          hd_status_plugin_item_init_plugin_item));
 
@@ -271,14 +269,12 @@ hd_status_plugin_item_class_init (HDStatusPluginItemClass *klass)
                                                         "The widget which should be displayed in the Status Area (should be used by clock plugin only)",
                                                         GTK_TYPE_WIDGET,
                                                         G_PARAM_READWRITE));
-
-  g_type_class_add_private (klass, sizeof (HDStatusPluginItemPrivate));
 }
 
 static void
 hd_status_plugin_item_init (HDStatusPluginItem *item)
 {
-  item->priv = HD_STATUS_PLUGIN_ITEM_GET_PRIVATE (item);  
+  item->priv = (HDStatusPluginItemPrivate*)hd_status_plugin_item_get_instance_private(item);
 }
 
 /**
