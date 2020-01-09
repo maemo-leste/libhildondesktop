@@ -57,9 +57,6 @@
 
 #define MAX_URL_LENGTH 150
 
-#define HD_SHORTCUTS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_SHORTCUTS, HDShortcutsPrivate))
-
 struct _HDShortcutsPrivate
 {
   GHashTable *applets;
@@ -79,7 +76,7 @@ enum
   PROP_THROTTLED,
 };
 
-G_DEFINE_TYPE (HDShortcuts, hd_shortcuts, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDShortcuts, hd_shortcuts, G_TYPE_OBJECT, G_ADD_PRIVATE(HDShortcuts));
 
 static gboolean
 delete_event_cb (GtkWidget   *shortcut,
@@ -442,14 +439,12 @@ hd_shortcuts_class_init (HDShortcutsClass *klass)
                                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT |
                                                          G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                                                          G_PARAM_STATIC_BLURB));
-
-  g_type_class_add_private (klass, sizeof (HDShortcutsPrivate));
 }
 
 static void
 hd_shortcuts_init (HDShortcuts *shortcuts)
 {
-  shortcuts->priv = HD_SHORTCUTS_GET_PRIVATE (shortcuts);
+  shortcuts->priv = (HDShortcutsPrivate*)hd_shortcuts_get_instance_private(shortcuts);
   shortcuts->priv->gconf_client = gconf_client_get_default ();
   shortcuts->priv->applets = g_hash_table_new_full (g_str_hash,
                                                     g_str_equal,
