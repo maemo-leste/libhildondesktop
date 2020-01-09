@@ -126,9 +126,6 @@
  *
  **/
 
-#define HD_HOME_PLUGIN_ITEM_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_HOME_PLUGIN_ITEM, HDHomePluginItemPrivate))
-
 static void hd_home_plugin_item_init_plugin_item (HDPluginItemIface *iface);
 
 enum
@@ -159,6 +156,7 @@ struct _HDHomePluginItemPrivate
 };
 
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (HDHomePluginItem, hd_home_plugin_item, GTK_TYPE_WINDOW,
+                                  G_ADD_PRIVATE(HDHomePluginItem)
                                   G_IMPLEMENT_INTERFACE (HD_TYPE_PLUGIN_ITEM,
                                                          hd_home_plugin_item_init_plugin_item));
 
@@ -472,14 +470,12 @@ hd_home_plugin_item_class_init (HDHomePluginItemClass *klass)
                                          g_cclosure_marshal_VOID__VOID,
                                          G_TYPE_NONE,
                                          0);
-
-  g_type_class_add_private (klass, sizeof (HDHomePluginItemPrivate));
 }
 
 static void
 hd_home_plugin_item_init (HDHomePluginItem *item)
 {
-  item->priv = HD_HOME_PLUGIN_ITEM_GET_PRIVATE (item);
+  item->priv = (HDHomePluginItemPrivate*)hd_home_plugin_item_get_instance_private(item);
 
   gtk_widget_add_events (GTK_WIDGET (item),
                          GDK_PROPERTY_CHANGE_MASK);
