@@ -38,9 +38,6 @@
 
 #include "hd-plugin-manager.h"
 
-#define HD_PLUGIN_MANAGER_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_PLUGIN_MANAGER, HDPluginManagerPrivate))
-
 #define HD_PLUGIN_MANAGER_CONFIG_GROUP                    "X-PluginManager"
 #define HD_PLUGIN_MANAGER_CONFIG_KEY_DEBUG_PLUGINS        "X-Debug-Plugins"
 #define HD_PLUGIN_MANAGER_CONFIG_KEY_LOAD_ALL_PLUGINS     "X-Load-All-Plugins"
@@ -116,7 +113,7 @@ static guint plugin_manager_signals [LAST_SIGNAL] = { 0 };
  * 
  **/
 
-G_DEFINE_TYPE (HDPluginManager, hd_plugin_manager, HD_TYPE_PLUGIN_CONFIGURATION);
+G_DEFINE_TYPE_WITH_CODE (HDPluginManager, hd_plugin_manager, HD_TYPE_PLUGIN_CONFIGURATION, G_ADD_PRIVATE(HDPluginManager));
 
 static void
 delete_plugin (gpointer  data,
@@ -405,7 +402,7 @@ hd_plugin_manager_plugin_module_updated (HDPluginConfiguration *configuration,
 static void
 hd_plugin_manager_init (HDPluginManager *manager)
 {
-  manager->priv = HD_PLUGIN_MANAGER_GET_PRIVATE (manager);
+  manager->priv = (HDPluginManagerPrivate*)hd_plugin_manager_get_instance_private(manager);
 
   manager->priv->factory = hd_plugin_loader_factory_new (); 
 
@@ -884,8 +881,6 @@ hd_plugin_manager_class_init (HDPluginManagerClass *klass)
   plugin_configuration_class->items_configuration_loaded = hd_plugin_manager_items_configuration_loaded;
 
   g_object_class->finalize = hd_plugin_manager_finalize;
-
-  g_type_class_add_private (g_object_class, sizeof (HDPluginManagerPrivate));
 
   /**
    *  HDPluginManager::plugin-added:
