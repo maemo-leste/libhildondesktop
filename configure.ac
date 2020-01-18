@@ -46,7 +46,11 @@ AC_SUBST(X_CFLAGS)
 
 AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal)
 
-GTK_DOC_CHECK([1.3])
+m4_ifdef([GTK_DOC_CHECK], [
+GTK_DOC_CHECK([1.14])
+],[
+AM_CONDITIONAL([ENABLE_GTK_DOC], false)
+])
 
 #++++++++++++++++++
 # Misc build flags
