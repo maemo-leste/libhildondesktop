@@ -4,11 +4,15 @@
 
 # Add more debug flags
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	DEB_CFLAGS_APPEND += -ggdb -DDEBUG
+	DEB_CFLAGS_MAINT_APPEND += -ggdb
+	DEB_CPPFLAGS_MAINT_APPEND += -DDEBUG
 endif
 
-DEB_CFLAGS_APPEND +=-Wno-error=unused-but-set-variable
-export DEB_CFLAGS_APPEND
+DEB_CPPFLAGS_MAINT_APPEND +=
+DEB_CFLAGS_MAINT_APPEND +=-Wno-error=unused-but-set-variable
+
+export DEB_CFLAGS_MAINT_APPEND
+export DEB_CPPFLAGS_MAINT_APPEND
 
 DEB_INSTALL_DOCS_ALL=
 
