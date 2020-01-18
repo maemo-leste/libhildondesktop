@@ -29,14 +29,12 @@
 
 #include "example-icon-status-menu-item.h"
 
-#define EXAMPLE_ICON_STATUS_MENU_ITEM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj, EXAMPLE_ICON_TYPE_STATUS_MENU_ITEM, ExampleIconStatusMenuItemPrivate))
-
 struct _ExampleIconStatusMenuItemPrivate
 {
   DBusConnection *connection;
 };
 
-HD_DEFINE_PLUGIN_MODULE (ExampleIconStatusMenuItem, example_icon_status_menu_item, HD_TYPE_STATUS_MENU_ITEM);
+HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleIconStatusMenuItem, example_icon_status_menu_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleIconStatusMenuItem), , );
 
 static void
 example_icon_status_menu_item_class_finalize (ExampleIconStatusMenuItemClass *klass)
@@ -66,8 +64,6 @@ example_icon_status_menu_item_class_init (ExampleIconStatusMenuItemClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->dispose = example_icon_status_menu_item_dispose;
-
-  g_type_class_add_private (klass, sizeof (ExampleIconStatusMenuItemPrivate));
 }
 
 static void
@@ -95,7 +91,7 @@ example_icon_status_menu_item_init (ExampleIconStatusMenuItem *menu_item)
   DBusError error;
   GdkPixbuf *pixbuf;
 
-  menu_item->priv = EXAMPLE_ICON_STATUS_MENU_ITEM_GET_PRIVATE (menu_item);
+  menu_item->priv = (ExampleIconStatusMenuItemPrivate*)example_icon_status_menu_item_get_instance_private(menu_item);
 
   /* Button with icon and two rows of text */
   button = gtk_button_new ();

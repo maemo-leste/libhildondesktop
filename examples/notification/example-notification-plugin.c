@@ -29,10 +29,6 @@
 
 #include "example-notification-plugin.h"
 
-#define EXAMPLE_NOTIFICATION_PLUGIN_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj, \
-                                                                                   EXAMPLE_TYPE_NOTIFICATION_PLUGIN, \
-                                                                                   ExampleNotificationPluginPrivate))
-
 struct _ExampleNotificationPluginPrivate
 {
   gpointer data;
@@ -41,6 +37,7 @@ struct _ExampleNotificationPluginPrivate
 static void example_notification_plugin_notification_plugin_iface_init (HDNotificationPluginIface *iface);
 
 G_DEFINE_DYNAMIC_TYPE_EXTENDED (ExampleNotificationPlugin, example_notification_plugin, G_TYPE_OBJECT, 0,
+                                G_ADD_PRIVATE(ExampleNotificationPlugin)
                                 G_IMPLEMENT_INTERFACE (HD_TYPE_NOTIFICATION_PLUGIN,
                                                        example_notification_plugin_notification_plugin_iface_init));
 HD_PLUGIN_MODULE_SYMBOLS (example_notification_plugin);
@@ -83,7 +80,6 @@ example_notification_plugin_class_finalize (ExampleNotificationPluginClass *klas
 static void
 example_notification_plugin_class_init (ExampleNotificationPluginClass *klass)
 {
-  g_type_class_add_private (klass, sizeof (ExampleNotificationPluginPrivate));
 }
 
 static void

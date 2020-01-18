@@ -29,14 +29,12 @@
 
 #include "example-signal-status-area-item.h"
 
-#define EXAMPLE_SIGNAL_STATUS_AREA_ITEM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj, EXAMPLE_TYPE_SIGNAL_STATUS_AREA_ITEM, ExampleSignalStatusAreaItemPrivate))
-
 struct _ExampleSignalStatusAreaItemPrivate
 {
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE (ExampleSignalStatusAreaItem, example_signal_status_area_item, HD_TYPE_STATUS_MENU_ITEM);
+HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleSignalStatusAreaItem, example_signal_status_area_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleSignalStatusAreaItem), , );
 
 static void
 example_signal_status_area_item_class_finalize (ExampleSignalStatusAreaItemClass *klass)
@@ -46,7 +44,6 @@ example_signal_status_area_item_class_finalize (ExampleSignalStatusAreaItemClass
 static void
 example_signal_status_area_item_class_init (ExampleSignalStatusAreaItemClass *klass)
 {
-  g_type_class_add_private (klass, sizeof (ExampleSignalStatusAreaItemPrivate));
 }
 
 static void
@@ -54,7 +51,7 @@ example_signal_status_area_item_init (ExampleSignalStatusAreaItem *menu_item)
 {
   GdkPixbuf *pixbuf;
 
-  menu_item->priv = EXAMPLE_SIGNAL_STATUS_AREA_ITEM_GET_PRIVATE (menu_item);
+  menu_item->priv = (ExampleSignalStatusAreaItemPrivate*)example_signal_status_area_item_get_instance_private(menu_item);
 
   /* Show a Status Area icon */
   pixbuf = gdk_pixbuf_new_from_file (HILDON_DATA_DIR "/example-status-area-icon-signal.png",

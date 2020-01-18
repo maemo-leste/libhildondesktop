@@ -29,14 +29,12 @@
 
 #include "example-battery-status-area-item.h"
 
-#define EXAMPLE_BATTERY_STATUS_AREA_ITEM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj, EXAMPLE_TYPE_BATTERY_STATUS_AREA_ITEM, ExampleBatteryStatusAreaItemPrivate))
-
 struct _ExampleBatteryStatusAreaItemPrivate
 {
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE (ExampleBatteryStatusAreaItem, example_battery_status_area_item, HD_TYPE_STATUS_MENU_ITEM);
+HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleBatteryStatusAreaItem, example_battery_status_area_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleBatteryStatusAreaItem), , );
 
 static void
 example_battery_status_area_item_class_finalize (ExampleBatteryStatusAreaItemClass *klass)
@@ -46,7 +44,6 @@ example_battery_status_area_item_class_finalize (ExampleBatteryStatusAreaItemCla
 static void
 example_battery_status_area_item_class_init (ExampleBatteryStatusAreaItemClass *klass)
 {
-  g_type_class_add_private (klass, sizeof (ExampleBatteryStatusAreaItemPrivate));
 }
 
 static void
@@ -54,7 +51,7 @@ example_battery_status_area_item_init (ExampleBatteryStatusAreaItem *menu_item)
 {
   GdkPixbuf *pixbuf;
 
-  menu_item->priv = EXAMPLE_BATTERY_STATUS_AREA_ITEM_GET_PRIVATE (menu_item);
+  menu_item->priv = (ExampleBatteryStatusAreaItemPrivate*)example_battery_status_area_item_get_instance_private(menu_item);
 
   /* Show a Status Area icon */
   pixbuf = gdk_pixbuf_new_from_file (HILDON_DATA_DIR "/example-status-area-icon-battery.png",

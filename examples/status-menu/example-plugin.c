@@ -2,14 +2,12 @@
 
 #include <hildon/hildon.h>
 
-#define EXAMPLE_PLUGIN_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj, EXAMPLE_TYPE_PLUGIN, ExamplePluginPrivate))
-
 struct _ExamplePluginPrivate
 {
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE (ExamplePlugin, example_plugin, HD_TYPE_STATUS_MENU_ITEM);
+HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExamplePlugin, example_plugin, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExamplePlugin), , );
 
 static void
 visibility_changed (HDStatusMenuItem *plugin)
@@ -36,7 +34,6 @@ example_plugin_class_finalize (ExamplePluginClass *klass)
 static void
 example_plugin_class_init (ExamplePluginClass *klass)
 {
-  g_type_class_add_private (klass, sizeof (ExamplePluginPrivate));
 }
 
 static void
@@ -45,7 +42,7 @@ example_plugin_init (ExamplePlugin *menu_item)
   GtkWidget *button;
   GdkPixbuf *icon = NULL;
 
-  menu_item->priv = EXAMPLE_PLUGIN_GET_PRIVATE (menu_item);
+  menu_item->priv = (ExamplePluginPrivate*)example_plugin_get_instance_private(menu_item);
 
   /* A HildonButton */
   button = hildon_button_new_with_text (HILDON_SIZE_FINGER_HEIGHT | HILDON_SIZE_AUTO_WIDTH,

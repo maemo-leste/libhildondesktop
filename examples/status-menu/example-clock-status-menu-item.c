@@ -28,15 +28,13 @@
 
 #include "example-clock-status-menu-item.h"
 
-#define EXAMPLE_CLOCK_STATUS_MENU_ITEM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj, EXAMPLE_CLOCK_TYPE_STATUS_MENU_ITEM, ExampleClockStatusMenuItemPrivate))
-
 struct _ExampleClockStatusMenuItemPrivate
 {
   GtkWidget    *label, *status_area_label;
   guint         timeout_id;
 };
 
-HD_DEFINE_PLUGIN_MODULE (ExampleClockStatusMenuItem, example_clock_status_menu_item, HD_TYPE_STATUS_MENU_ITEM);
+HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleClockStatusMenuItem, example_clock_status_menu_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleClockStatusMenuItem), , );
 
 static void
 example_clock_status_menu_item_class_finalize (ExampleClockStatusMenuItemClass *klass)
@@ -63,8 +61,6 @@ example_clock_status_menu_item_class_init (ExampleClockStatusMenuItemClass *klas
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->dispose = example_clock_status_menu_item_dispose;
-
-  g_type_class_add_private (klass, sizeof (ExampleClockStatusMenuItemPrivate));
 }
 
 static gboolean
@@ -97,7 +93,7 @@ example_clock_status_menu_item_init (ExampleClockStatusMenuItem *menu_item)
 {
   GtkWidget *status_area_box;
 
-  menu_item->priv = EXAMPLE_CLOCK_STATUS_MENU_ITEM_GET_PRIVATE (menu_item);
+  menu_item->priv = (ExampleClockStatusMenuItemPrivate*)example_clock_status_menu_item_get_instance_private(menu_item);
 
   menu_item->priv->label = gtk_button_new_with_label ("...");
   gtk_container_set_border_width (GTK_CONTAINER (menu_item->priv->label), 3);

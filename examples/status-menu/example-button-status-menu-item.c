@@ -28,14 +28,12 @@
 
 #include "example-button-status-menu-item.h"
 
-#define EXAMPLE_BUTTON_STATUS_MENU_ITEM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj, EXAMPLE_BUTTON_TYPE_STATUS_MENU_ITEM, ExampleButtonStatusMenuItemPrivate))
-
 struct _ExampleButtonStatusMenuItemPrivate
 {
   guint timeout_id;
 };
 
-HD_DEFINE_PLUGIN_MODULE (ExampleButtonStatusMenuItem, example_button_status_menu_item, HD_TYPE_STATUS_MENU_ITEM);
+HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleButtonStatusMenuItem, example_button_status_menu_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleButtonStatusMenuItem), , );
 
 static void
 example_button_status_menu_item_class_finalize (ExampleButtonStatusMenuItemClass *klass)
@@ -93,8 +91,6 @@ example_button_status_menu_item_class_init (ExampleButtonStatusMenuItemClass *kl
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->dispose = example_button_status_menu_item_dispose;
-
-  g_type_class_add_private (klass, sizeof (ExampleButtonStatusMenuItemPrivate));
 }
 
 static void
@@ -102,7 +98,7 @@ example_button_status_menu_item_init (ExampleButtonStatusMenuItem *menu_item)
 {
   GtkWidget *button;
 
-  menu_item->priv = EXAMPLE_BUTTON_STATUS_MENU_ITEM_GET_PRIVATE (menu_item);
+  menu_item->priv = (ExampleButtonStatusMenuItemPrivate*)example_button_status_menu_item_get_instance_private(menu_item);
 
   /*
   button = hildon_button_new (HILDON_BUTTON_WITH_VERTICAL_VALUE | 

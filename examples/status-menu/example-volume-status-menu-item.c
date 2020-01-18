@@ -28,14 +28,12 @@
 
 #include "example-volume-status-menu-item.h"
 
-#define EXAMPLE_VOLUME_STATUS_MENU_ITEM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj, EXAMPLE_VOLUME_TYPE_STATUS_MENU_ITEM, ExampleVolumeStatusMenuItemPrivate))
-
 struct _ExampleVolumeStatusMenuItemPrivate
 {
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE (ExampleVolumeStatusMenuItem, example_volume_status_menu_item, HD_TYPE_STATUS_MENU_ITEM);
+HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleVolumeStatusMenuItem, example_volume_status_menu_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleVolumeStatusMenuItem), , );
 
 static void
 example_volume_status_menu_item_class_finalize (ExampleVolumeStatusMenuItemClass *klass)
@@ -45,7 +43,6 @@ example_volume_status_menu_item_class_finalize (ExampleVolumeStatusMenuItemClass
 static void
 example_volume_status_menu_item_class_init (ExampleVolumeStatusMenuItemClass *klass)
 {
-  g_type_class_add_private (klass, sizeof (ExampleVolumeStatusMenuItemPrivate));
 }
 
 static void
