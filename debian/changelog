@@ -1,3 +1,10 @@
+libhildondesktop (2.1.45) unstable; urgency=medium
+
+  * Remove deprecated gtk interfaces
+  * Port to newer debhelper
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Sat, 18 Jan 2020 11:43:37 +0100
+
 libhildondesktop (2.1.44) unstable; urgency=medium
 
   * GType is not 32 bit on 64 bit system [Ivaylo Dimitrov]
