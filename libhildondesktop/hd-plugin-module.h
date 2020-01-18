@@ -85,7 +85,7 @@ void            hd_plugin_module_add_type   (HDPluginModule *module,
  * <programlisting>
  * #ifndef __EXAMPLE_HOME_APPLET_H__
  * #define __EXAMPLE_HOME_APPLET_H__
- * #include <libhildondesktop/libhildondesktop.h>
+ * #include &lt;libhildondesktop/libhildondesktop.h&gt;
  *
  * G_BEGIN_DECLS
  *
