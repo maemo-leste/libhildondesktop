@@ -1,28 +1,17 @@
 #!/usr/bin/make -f
-
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/autotools.mk
-include /usr/share/cdbs/1/rules/utils.mk
-
-CFLAGS+=-Wno-error=unused-but-set-variable
-
-# Use soft-float and thumb mode if it enabled.
-ifneq (,$(findstring thumb,$(DEB_BUILD_OPTIONS)))
-	CFLAGS+= -mthumb -fPIC
-endif
+%:
+	dh $@
 
 # Add more debug flags
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	CFLAGS+= -ggdb -DDEBUG
+	DEB_CFLAGS_APPEND += -ggdb -DDEBUG
 endif
 
-DEB_CONFIGURE_EXTRA_FLAGS := --enable-gtk-doc
+DEB_CFLAGS_APPEND +=-Wno-error=unused-but-set-variable
+export DEB_CFLAGS_APPEND
 
-DEB_DH_MAKESHLIBS_ARGS_libhildondesktop1-examples := --noscripts
-
-DEB_DH_INSTALLCHANGELOGS_ARGS=--no-act
-DEB_DH_INSTALLDOCS_ARGS=--no-act
 DEB_INSTALL_DOCS_ALL=
 
-makebuilddir::
-	AUTOGEN_SUBDIR_MODE=1 NOCONFIGURE=yes ./autogen.sh
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		--enable-gtk-doc

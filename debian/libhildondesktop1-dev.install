@@ -1,4 +1,4 @@
-debian/tmp/usr/lib/libhildondesktop-1.so
-debian/tmp/usr/lib/libhildondesktop-1.a
-debian/tmp/usr/lib/pkgconfig/libhildondesktop-1.pc
+debian/tmp/usr/lib/*/libhildondesktop-1.so
+debian/tmp/usr/lib/*/libhildondesktop-1.a
+debian/tmp/usr/lib/*/pkgconfig/libhildondesktop-1.pc
 debian/tmp/usr/include/libhildondesktop-1
