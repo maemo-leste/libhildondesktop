@@ -1,11 +1,9 @@
 #!/usr/bin/make -f
-%:
-	dh $@
 
 # Add more debug flags
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	DEB_CFLAGS_MAINT_APPEND += -ggdb
-	DEB_CPPFLAGS_MAINT_APPEND += -DDEBUG
+    DEB_CFLAGS_MAINT_APPEND += -g
+    DEB_CPPFLAGS_MAINT_APPEND += -DDEBUG
 endif
 
 DEB_CPPFLAGS_MAINT_APPEND +=
@@ -19,3 +17,9 @@ DEB_INSTALL_DOCS_ALL=
 override_dh_auto_configure:
 	dh_auto_configure -- \
 		--enable-gtk-doc
+
+override_dh_autoreconf:
+	dh_autoreconf --as-needed
+
+%:
+	dh $@
