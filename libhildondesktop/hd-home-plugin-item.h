@@ -56,7 +56,6 @@ typedef enum
 
 typedef struct _HDHomePluginItem        HDHomePluginItem;
 typedef struct _HDHomePluginItemClass   HDHomePluginItemClass;
-typedef struct _HDHomePluginItemPrivate HDHomePluginItemPrivate;
 
 /** HDHomePluginItem:
  *
@@ -65,8 +64,6 @@ typedef struct _HDHomePluginItemPrivate HDHomePluginItemPrivate;
 struct _HDHomePluginItem
 {
   GtkWindow parent;
-
-  HDHomePluginItemPrivate *priv;
 };
 
 struct _HDHomePluginItemClass

@@ -155,16 +155,22 @@ struct _HDHomePluginItemPrivate
   gboolean                    is_on_current_desktop;
 };
 
+typedef struct _HDHomePluginItemPrivate HDHomePluginItemPrivate;
+
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (HDHomePluginItem, hd_home_plugin_item, GTK_TYPE_WINDOW,
                                   G_ADD_PRIVATE(HDHomePluginItem)
                                   G_IMPLEMENT_INTERFACE (HD_TYPE_PLUGIN_ITEM,
                                                          hd_home_plugin_item_init_plugin_item));
 
+#define HD_HOME_PLUGIN_ITEM_GET_PRIVATE(item) \
+  ((HDHomePluginItemPrivate *)hd_home_plugin_item_get_instance_private (item))
+
 static void
 hd_home_plugin_item_load_desktop_file (HDPluginItem *item,
                                        GKeyFile     *key_file)
 {
-  HDHomePluginItemPrivate *priv = HD_HOME_PLUGIN_ITEM (item)->priv;
+  HDHomePluginItemPrivate *priv =
+      HD_HOME_PLUGIN_ITEM_GET_PRIVATE (HD_HOME_PLUGIN_ITEM (item));
 
   /* Display on all views */
   priv->display_on_all_views = g_key_file_get_boolean (key_file,
@@ -207,7 +213,8 @@ static gboolean
 hd_home_plugin_item_property_notify_event (GtkWidget        *widget,
                                            GdkEventProperty *event)
 {
-  HDHomePluginItemPrivate *priv = HD_HOME_PLUGIN_ITEM (widget)->priv;
+  HDHomePluginItemPrivate *priv =
+      HD_HOME_PLUGIN_ITEM_GET_PRIVATE (HD_HOME_PLUGIN_ITEM (widget));
   static GdkAtom is_on_current_desktop_atom = GDK_NONE;
 
   if (G_UNLIKELY (is_on_current_desktop_atom == GDK_NONE))
@@ -237,7 +244,8 @@ hd_home_plugin_item_property_notify_event (GtkWidget        *widget,
 static void
 hd_home_plugin_item_realize (GtkWidget *widget)
 {
-  HDHomePluginItemPrivate *priv = HD_HOME_PLUGIN_ITEM (widget)->priv;
+  HDHomePluginItemPrivate *priv =
+      HD_HOME_PLUGIN_ITEM_GET_PRIVATE (HD_HOME_PLUGIN_ITEM (widget));
   GdkDisplay *display;
   Atom atom, wm_type;
   gchar *applet_id;
@@ -322,17 +330,14 @@ hd_home_plugin_item_constructed (GObject *object)
 static void
 hd_home_plugin_item_dispose (GObject *object)
 {
-  HDHomePluginItemPrivate *priv;
-
-  priv = HD_HOME_PLUGIN_ITEM (object)->priv;
-
   G_OBJECT_CLASS (hd_home_plugin_item_parent_class)->dispose (object);
 }
 
 static void
 hd_home_plugin_item_finalize (GObject *object)
 {
-  HDHomePluginItemPrivate *priv = HD_HOME_PLUGIN_ITEM (object)->priv;
+  HDHomePluginItemPrivate *priv =
+      HD_HOME_PLUGIN_ITEM_GET_PRIVATE (HD_HOME_PLUGIN_ITEM (object));
 
   g_free (priv->plugin_id);
   priv->plugin_id = NULL;
@@ -346,7 +351,8 @@ hd_home_plugin_item_get_property (GObject      *object,
                                   GValue       *value,
                                   GParamSpec   *pspec)
 {
-  HDHomePluginItemPrivate *priv = HD_HOME_PLUGIN_ITEM (object)->priv;
+  HDHomePluginItemPrivate *priv =
+      HD_HOME_PLUGIN_ITEM_GET_PRIVATE (HD_HOME_PLUGIN_ITEM (object));
 
   switch (prop_id)
     {
@@ -369,7 +375,8 @@ hd_home_plugin_item_set_property (GObject      *object,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  HDHomePluginItemPrivate *priv = HD_HOME_PLUGIN_ITEM (object)->priv;
+  HDHomePluginItemPrivate *priv =
+      HD_HOME_PLUGIN_ITEM_GET_PRIVATE (HD_HOME_PLUGIN_ITEM (object));
 
   switch (prop_id)
     {
@@ -475,8 +482,6 @@ hd_home_plugin_item_class_init (HDHomePluginItemClass *klass)
 static void
 hd_home_plugin_item_init (HDHomePluginItem *item)
 {
-  item->priv = (HDHomePluginItemPrivate*)hd_home_plugin_item_get_instance_private(item);
-
   gtk_widget_add_events (GTK_WIDGET (item),
                          GDK_PROPERTY_CHANGE_MASK);
 }
@@ -521,12 +526,9 @@ hd_home_plugin_item_get_dbus_connection (HDHomePluginItem *item,
                                          DBusBusType         type,
                                          DBusError          *error)
 {
-  HDHomePluginItemPrivate *priv;
   DBusConnection *connection;
 
   g_return_val_if_fail (HD_IS_HOME_PLUGIN_ITEM (item), NULL);
-
-  priv = item->priv;
 
   /* Create a private connection */
   connection = dbus_bus_get_private (type, error);
@@ -562,14 +564,11 @@ hd_home_plugin_item_get_dbus_g_connection (HDHomePluginItem  *item,
                                            DBusBusType          type,
                                            GError             **error)
 {
-  HDHomePluginItemPrivate *priv;
   DBusGConnection *g_connection;
   DBusConnection *connection;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (HD_IS_HOME_PLUGIN_ITEM (item), NULL);
-
-  priv = item->priv;
 
   /* Create a DBusGConnection (not private yet) */
   g_connection = dbus_g_bus_get (type, &tmp_error);
@@ -689,8 +688,7 @@ hd_home_plugin_item_set_settings (HDHomePluginItem *item,
 
   g_return_if_fail (HD_IS_HOME_PLUGIN_ITEM (item));
 
-  priv = item->priv;
-
+  priv = HD_HOME_PLUGIN_ITEM_GET_PRIVATE (item);
   priv->settings = settings;
 
   if (GTK_WIDGET_REALIZED (item))
