@@ -7,7 +7,7 @@ ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 endif
 
 DEB_CPPFLAGS_MAINT_APPEND +=
-DEB_CFLAGS_MAINT_APPEND +=-Wno-error=unused-but-set-variable
+DEB_CFLAGS_MAINT_APPEND +=
 
 export DEB_CFLAGS_MAINT_APPEND
 export DEB_CPPFLAGS_MAINT_APPEND
