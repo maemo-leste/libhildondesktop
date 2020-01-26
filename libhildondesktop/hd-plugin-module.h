@@ -207,6 +207,21 @@ HD_PLUGIN_MODULE_SYMBOLS_CODE (t_n, CODE_LOAD, CODE_UNLOAD)
 #define HD_DEFINE_PLUGIN_MODULE(TN, t_n, T_P)			\
 HD_DEFINE_PLUGIN_MODULE_EXTENDED (TN, t_n, T_P, {}, {}, {})
 
+/**
+ * HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE:
+ * @TN: The name of the object type, in Camel case. (ex: ObjectType)
+ * @t_n: The name of the object type, in lowercase, with words separated by '_'.  (ex: object_type)
+ * @T_P: The GType of the parent (ex: #STATUSBAR_TYPE_ITEM)
+ *
+ * Register an object supplied by a plugin in Hildon Desktop and adds private
+ * instance data to the type. It also defines a *_get_type() function. The name
+ * of the private struct added with this macro must be in forn TNPrivate
+ *
+ * See also to G_ADD_PRIVATE_DYNAMIC().
+ */
+#define HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE(TN, t_n, T_P)	\
+HD_DEFINE_PLUGIN_MODULE_EXTENDED (TN, t_n, T_P, G_ADD_PRIVATE_DYNAMIC (TN), {}, {})
+
 #define HD_DYNAMIC_IMPLEMENT_INTERFACE(TYPE_IFACE, iface_init)  \
 {                                                               \
   const GInterfaceInfo g_implement_interface_info =             \
