@@ -6,7 +6,7 @@ example_label_home_applet_la_CPPFLAGS = \
 	$(DBUS_CFLAGS)
 
 example_label_home_applet_la_LDFLAGS = \
-	-module -avoid-version
+	-Wl,--as-needed -module -avoid-version
 
 example_label_home_applet_la_LIBADD = \
 	$(HILDON_LIBS)				\

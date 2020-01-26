@@ -6,7 +6,7 @@ example_notification_plugin_la_CPPFLAGS = \
 	$(DBUS_CFLAGS)
 
 example_notification_plugin_la_LDFLAGS = \
-	-module -avoid-version
+	-Wl,--as-needed -module -avoid-version
 
 example_notification_plugin_la_LIBADD = \
 	$(HILDON_LIBS)			\

@@ -1,11 +1,14 @@
 lib_LTLIBRARIES = libhildondesktop-@API_VERSION_MAJOR@.la
 
-libhildondesktop_@API_VERSION_MAJOR@_la_LDFLAGS = $(LIBHILDONDESKTOP_LT_LDFLAGS)
+libhildondesktop_@API_VERSION_MAJOR@_la_LDFLAGS = \
+	-Wl,--as-needed $(LIBHILDONDESKTOP_LT_LDFLAGS)
 
 libhildondesktop_@API_VERSION_MAJOR@_la_CFLAGS = \
 	$(HILDON_CFLAGS)							\
-	$(GCONF_CFLAGS)							\
+	$(GCONF_CFLAGS)								\
 	$(DBUS_CFLAGS)								\
+	$(GMODULE_CFLAGS)							\
+	$(X11_CFLAGS)							\
 	-I$(top_srcdir) 							\
 	-DLOCALEDIR=\"$(localedir)\" 						\
 	-DDATADIR=\"$(datadir)\"						\
@@ -39,8 +42,10 @@ libhildondesktop_@API_VERSION_MAJOR@_la_SOURCES = \
 
 libhildondesktop_@API_VERSION_MAJOR@_la_LIBADD = \
 	$(HILDON_LIBS)								\
-	$(GCONF_LIBS)							\
+	$(GCONF_LIBS)								\
 	$(DBUS_LIBS)								\
+	$(GMODULE_LIBS)								\
+	$(X11_LIBS)								\
 	@LIBHILDONDESKTOP_LT_LDFLAGS@
 
 libhildondesktop_@API_VERSION_MAJOR@_includedir = $(includedir)/$(PACKAGE)-$(API_VERSION_MAJOR)/$(PACKAGE)

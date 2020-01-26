@@ -17,7 +17,7 @@ hildondesktoplib_LTLIBRARIES = example-status-menu-plugin.la \
 	example-battery-status-area-item.la
 
 example_status_menu_plugin_la_CPPFLAGS = $(HILDON_CFLAGS) $(DBUS_CFLAGS)
-example_status_menu_plugin_la_LDFLAGS = -module -avoid-version
+example_status_menu_plugin_la_LDFLAGS = -Wl,--as-needed -module -avoid-version
 example_status_menu_plugin_la_LIBADD = $(HILDON_CFLAGS) $(DBUS_CFLAGS)
 example_status_menu_plugin_la_SOURCES = example-plugin.c example-plugin.h
 
@@ -26,7 +26,7 @@ example_clock_status_menu_item_la_CPPFLAGS = \
 	$(DBUS_CFLAGS)
 
 example_clock_status_menu_item_la_LDFLAGS = \
-	-module -avoid-version
+	-Wl,--as-needed -module -avoid-version
 
 example_clock_status_menu_item_la_LIBADD = \
 	$(HILDON_LIBS)				\
@@ -42,7 +42,7 @@ example_icon_status_menu_item_la_CPPFLAGS = \
 	-DHILDON_DATA_DIR=\"$(hildondatadir)\"
 
 example_icon_status_menu_item_la_LDFLAGS = \
-	-module -avoid-version
+	-Wl,--as-needed -module -avoid-version
 
 example_icon_status_menu_item_la_LIBADD = \
 	$(HILDON_LIBS)				\
@@ -58,7 +58,7 @@ example_button_status_menu_item_la_CPPFLAGS = \
 	-DHILDON_DATA_DIR=\"$(hildondatadir)\"
 
 example_button_status_menu_item_la_LDFLAGS = \
-	-module -avoid-version
+	-Wl,--as-needed -module -avoid-version
 
 example_button_status_menu_item_la_LIBADD = \
 	$(HILDON_LIBS)				\
@@ -74,7 +74,7 @@ example_volume_status_menu_item_la_CPPFLAGS = \
 	-DHILDON_DATA_DIR=\"$(hildondatadir)\"
 
 example_volume_status_menu_item_la_LDFLAGS = \
-	-module -avoid-version
+	-Wl,--as-needed -module -avoid-version
 
 example_volume_status_menu_item_la_LIBADD = \
 	$(HILDON_LIBS)				\
@@ -90,7 +90,7 @@ example_signal_status_area_item_la_CPPFLAGS = \
 	-DHILDON_DATA_DIR=\"$(hildondatadir)\"
 
 example_signal_status_area_item_la_LDFLAGS = \
-	-module -avoid-version
+	-Wl,--as-needed -module -avoid-version
 
 example_signal_status_area_item_la_LIBADD = \
 	$(HILDON_LIBS)				\
@@ -106,7 +106,7 @@ example_battery_status_area_item_la_CPPFLAGS = \
 	-DHILDON_DATA_DIR=\"$(hildondatadir)\"
 
 example_battery_status_area_item_la_LDFLAGS = \
-	-module -avoid-version
+	-Wl,--as-needed -module -avoid-version
 
 example_battery_status_area_item_la_LIBADD = \
 	$(HILDON_LIBS)				\
