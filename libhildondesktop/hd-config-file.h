@@ -36,13 +36,10 @@ G_BEGIN_DECLS
 
 typedef struct _HDConfigFile        HDConfigFile;
 typedef struct _HDConfigFileClass   HDConfigFileClass;
-typedef struct _HDConfigFilePrivate HDConfigFilePrivate;
 
 struct _HDConfigFile 
 {
   GInitiallyUnowned gobject;
-
-  HDConfigFilePrivate *priv;
 };
 
 struct _HDConfigFileClass 

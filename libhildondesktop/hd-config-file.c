@@ -62,9 +62,14 @@ struct _HDConfigFilePrivate
   GFile        *user_conf_file;
 };
 
+typedef struct _HDConfigFilePrivate HDConfigFilePrivate;
+
 static guint signals[LAST_SIGNAL] = { 0 };
 
-G_DEFINE_TYPE_WITH_CODE (HDConfigFile, hd_config_file, G_TYPE_INITIALLY_UNOWNED, G_ADD_PRIVATE(HDConfigFile));
+G_DEFINE_TYPE_WITH_PRIVATE (HDConfigFile, hd_config_file, G_TYPE_INITIALLY_UNOWNED);
+
+#define HD_CONFIG_FILE_GET_PRIVATE(config_file) \
+  ((HDConfigFilePrivate *)hd_config_file_get_instance_private (config_file));
 
 static void
 hd_config_file_monitored_dir_changed (GFileMonitor      *monitor,
@@ -74,10 +79,8 @@ hd_config_file_monitored_dir_changed (GFileMonitor      *monitor,
                                       HDConfigFile      *config_file)
 {
   gchar *basename;
-  HDConfigFilePrivate *priv;
+  HDConfigFilePrivate *priv = HD_CONFIG_FILE_GET_PRIVATE (config_file);
   gchar *info_uri = g_file_get_uri (info);
-
-  priv = config_file->priv;
 
   basename = g_path_get_basename (info_uri);
   if (!strcmp (basename, priv->filename))
@@ -91,7 +94,9 @@ hd_config_file_monitored_dir_changed (GFileMonitor      *monitor,
 static void
 hd_config_file_constructed (GObject *object)
 {
-  HDConfigFilePrivate *priv = HD_CONFIG_FILE (object)->priv;
+  HDConfigFilePrivate *priv;
+
+  priv = HD_CONFIG_FILE_GET_PRIVATE (HD_CONFIG_FILE (object));
 
   if (priv->system_conf_dir != NULL)
     {
@@ -146,7 +151,7 @@ hd_config_file_finalize (GObject *object)
 
   g_return_if_fail (HD_IS_CONFIG_FILE (object));
 
-  priv = HD_CONFIG_FILE (object)->priv;
+  priv = HD_CONFIG_FILE_GET_PRIVATE (HD_CONFIG_FILE (object));
 
   g_free (priv->system_conf_dir);
   priv->system_conf_dir = NULL;
@@ -192,7 +197,7 @@ hd_config_file_set_property (GObject      *object,
 {
   HDConfigFilePrivate *priv;
 
-  priv = HD_CONFIG_FILE (object)->priv;
+  priv = HD_CONFIG_FILE_GET_PRIVATE (HD_CONFIG_FILE (object));
 
   switch (prop_id)
     {
@@ -224,7 +229,7 @@ hd_config_file_get_property (GObject      *object,
 {
   HDConfigFilePrivate *priv;
 
-  priv = HD_CONFIG_FILE (object)->priv;
+  priv = HD_CONFIG_FILE_GET_PRIVATE (HD_CONFIG_FILE (object));
 
   switch (prop_id)
     {
@@ -289,13 +294,13 @@ hd_config_file_class_init (HDConfigFileClass *klass)
 static void
 hd_config_file_init (HDConfigFile *config_file)
 {
-  config_file->priv = (HDConfigFilePrivate*)hd_config_file_get_instance_private(config_file);
+  HDConfigFilePrivate *priv = priv = HD_CONFIG_FILE_GET_PRIVATE (config_file);
 
-  config_file->priv->system_conf_monitor = NULL;
-  config_file->priv->system_conf_file = NULL;
+  priv->system_conf_monitor = NULL;
+  priv->system_conf_file = NULL;
 
-  config_file->priv->user_conf_monitor = NULL;
-  config_file->priv->user_conf_file = NULL;
+  priv->user_conf_monitor = NULL;
+  priv->user_conf_file = NULL;
 }
 
 HDConfigFile *
@@ -351,7 +356,7 @@ hd_config_file_load_file (HDConfigFile *config_file,
   GKeyFile *key_file;
   gchar *filename;
 
-  priv = config_file->priv;
+  priv = HD_CONFIG_FILE_GET_PRIVATE (config_file);
 
   key_file = g_key_file_new ();
 
@@ -449,7 +454,7 @@ hd_config_file_save_file (HDConfigFile *config_file,
   gsize length;
   GError *error = NULL;
 
-  priv = config_file->priv;
+  priv = HD_CONFIG_FILE_GET_PRIVATE (config_file);
 
   if (!priv->user_conf_dir || !priv->filename)
     {
