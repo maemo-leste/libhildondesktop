@@ -36,8 +36,12 @@ struct _HDPluginLoaderDefaultPrivate
   GHashTable *registry;
 };
 
-G_DEFINE_TYPE_WITH_CODE (HDPluginLoaderDefault, hd_plugin_loader_default, HD_TYPE_PLUGIN_LOADER, G_ADD_PRIVATE(HDPluginLoaderDefault));
+typedef struct _HDPluginLoaderDefaultPrivate HDPluginLoaderDefaultPrivate;
 
+G_DEFINE_TYPE_WITH_PRIVATE (HDPluginLoaderDefault, hd_plugin_loader_default, HD_TYPE_PLUGIN_LOADER);
+
+#define HD_PLUGIN_LOADER_DEFAULT_GET_PRIVATE(loader) \
+  ((HDPluginLoaderDefaultPrivate *) hd_plugin_loader_default_get_instance_private(loader))
 
 static GObject * 
 hd_plugin_loader_default_open_module (HDPluginLoaderDefault  *loader,
@@ -54,7 +58,7 @@ hd_plugin_loader_default_open_module (HDPluginLoaderDefault  *loader,
 
   g_return_val_if_fail (HD_IS_PLUGIN_LOADER_DEFAULT (loader), NULL);
 
-  priv = loader->priv;
+  priv = HD_PLUGIN_LOADER_DEFAULT_GET_PRIVATE (loader);
 
   module_file = g_key_file_get_string (keyfile,
                                        HD_PLUGIN_CONFIG_GROUP,
@@ -159,7 +163,8 @@ hd_plugin_loader_default_finalize (GObject *loader)
   g_return_if_fail (loader != NULL);
   g_return_if_fail (HD_IS_PLUGIN_LOADER_DEFAULT (loader));
 
-  priv = HD_PLUGIN_LOADER_DEFAULT (loader)->priv;
+  priv =
+      HD_PLUGIN_LOADER_DEFAULT_GET_PRIVATE (HD_PLUGIN_LOADER_DEFAULT (loader));
 
   if (priv->registry != NULL) 
     {
@@ -173,12 +178,13 @@ hd_plugin_loader_default_finalize (GObject *loader)
 static void
 hd_plugin_loader_default_init (HDPluginLoaderDefault *loader)
 {
-  loader->priv = (HDPluginLoaderDefaultPrivate*)hd_plugin_loader_default_get_instance_private(loader);
+  HDPluginLoaderDefaultPrivate *priv =
+      HD_PLUGIN_LOADER_DEFAULT_GET_PRIVATE (loader);
 
-  loader->priv->registry = g_hash_table_new_full (g_str_hash, 
-                                                  g_str_equal,
-                                                  (GDestroyNotify) g_free,
-                                                  NULL);
+  priv->registry = g_hash_table_new_full (g_str_hash,
+                                          g_str_equal,
+                                          (GDestroyNotify) g_free,
+                                          NULL);
 }
 
 static void

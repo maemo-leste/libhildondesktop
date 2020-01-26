@@ -31,7 +31,6 @@ G_BEGIN_DECLS
 
 typedef struct _HDPluginLoaderDefault HDPluginLoaderDefault;
 typedef struct _HDPluginLoaderDefaultClass HDPluginLoaderDefaultClass;
-typedef struct _HDPluginLoaderDefaultPrivate HDPluginLoaderDefaultPrivate;
 
 #define HD_TYPE_PLUGIN_LOADER_DEFAULT            (hd_plugin_loader_default_get_type ())
 #define HD_PLUGIN_LOADER_DEFAULT(obj)		 (G_TYPE_CHECK_INSTANCE_CAST ((obj), HD_TYPE_PLUGIN_LOADER_DEFAULT, HDPluginLoaderDefault))
@@ -43,8 +42,6 @@ typedef struct _HDPluginLoaderDefaultPrivate HDPluginLoaderDefaultPrivate;
 struct _HDPluginLoaderDefault
 {
   HDPluginLoader parent;
-
-  HDPluginLoaderDefaultPrivate *priv;
 };
 
 struct _HDPluginLoaderDefaultClass
