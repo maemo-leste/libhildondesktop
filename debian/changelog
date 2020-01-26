@@ -1,3 +1,10 @@
+libhildondesktop (2.2.1) unstable; urgency=medium
+
+  * Remove priv variables from instance classes
+  * Introduce new HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE macro
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Sun, 26 Jan 2020 20:24:28 +0200
+
 libhildondesktop (2.1.45) unstable; urgency=medium
 
   * Remove deprecated gtk interfaces
