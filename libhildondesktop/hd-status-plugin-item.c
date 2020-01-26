@@ -73,10 +73,15 @@ struct _HDStatusPluginItemPrivate
   gboolean   status_area_visible;
 };
 
+typedef struct _HDStatusPluginItemPrivate HDStatusPluginItemPrivate;
+
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (HDStatusPluginItem, hd_status_plugin_item, GTK_TYPE_BIN,
                                   G_ADD_PRIVATE(HDStatusPluginItem)
                                   G_IMPLEMENT_INTERFACE (HD_TYPE_PLUGIN_ITEM,
                                                          hd_status_plugin_item_init_plugin_item));
+
+#define HD_STATUS_PLUGIN_ITEM_GET_PRIVATE(item) \
+  ((HDStatusPluginItemPrivate *)hd_status_plugin_item_get_instance_private (item))
 
 static void
 hd_status_plugin_item_init_plugin_item (gpointer g_iface)
@@ -132,9 +137,8 @@ hd_status_plugin_item_size_request (GtkWidget      *widget,
 static void
 hd_status_plugin_item_dispose (GObject *object)
 {
-  HDStatusPluginItemPrivate *priv;
-
-  priv = HD_STATUS_PLUGIN_ITEM (object)->priv;
+  HDStatusPluginItemPrivate *priv =
+      HD_STATUS_PLUGIN_ITEM_GET_PRIVATE (HD_STATUS_PLUGIN_ITEM (object));
 
   if (priv->status_area_icon)
     {
@@ -154,7 +158,8 @@ hd_status_plugin_item_dispose (GObject *object)
 static void
 hd_status_plugin_item_finalize (GObject *object)
 {
-  HDStatusPluginItemPrivate *priv = HD_STATUS_PLUGIN_ITEM (object)->priv;
+  HDStatusPluginItemPrivate *priv =
+      HD_STATUS_PLUGIN_ITEM_GET_PRIVATE (HD_STATUS_PLUGIN_ITEM (object));
 
   g_free (priv->plugin_id);
   priv->plugin_id = NULL;
@@ -168,7 +173,8 @@ hd_status_plugin_item_get_property (GObject      *object,
                                     GValue       *value,
                                     GParamSpec   *pspec)
 {
-  HDStatusPluginItemPrivate *priv = HD_STATUS_PLUGIN_ITEM (object)->priv;
+  HDStatusPluginItemPrivate *priv =
+      HD_STATUS_PLUGIN_ITEM_GET_PRIVATE (HD_STATUS_PLUGIN_ITEM (object));
 
   switch (prop_id)
     {
@@ -199,7 +205,8 @@ hd_status_plugin_item_set_property (GObject      *object,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  HDStatusPluginItemPrivate *priv = HD_STATUS_PLUGIN_ITEM (object)->priv;
+  HDStatusPluginItemPrivate *priv =
+      HD_STATUS_PLUGIN_ITEM_GET_PRIVATE (HD_STATUS_PLUGIN_ITEM (object));
 
   switch (prop_id)
     {
@@ -274,7 +281,6 @@ hd_status_plugin_item_class_init (HDStatusPluginItemClass *klass)
 static void
 hd_status_plugin_item_init (HDStatusPluginItem *item)
 {
-  item->priv = (HDStatusPluginItemPrivate*)hd_status_plugin_item_get_instance_private(item);
 }
 
 /**
@@ -296,7 +302,7 @@ hd_status_plugin_item_set_status_area_icon (HDStatusPluginItem *item,
 
   g_return_if_fail (HD_IS_STATUS_PLUGIN_ITEM (item));
 
-  priv = item->priv;
+  priv = HD_STATUS_PLUGIN_ITEM_GET_PRIVATE (item);
 
   if (priv->status_area_icon)
     g_object_unref (priv->status_area_icon);
@@ -326,7 +332,7 @@ hd_status_plugin_item_set_status_area_widget (HDStatusPluginItem *item,
 
   g_return_if_fail (HD_IS_STATUS_PLUGIN_ITEM (item));
 
-  priv = item->priv;
+  priv = HD_STATUS_PLUGIN_ITEM_GET_PRIVATE (item);
 
   if (priv->status_area_widget)
     g_object_unref (priv->status_area_widget);
@@ -378,12 +384,9 @@ hd_status_plugin_item_get_dbus_connection (HDStatusPluginItem *item,
                                            DBusBusType         type,
                                            DBusError          *error)
 {
-  HDStatusPluginItemPrivate *priv;
   DBusConnection *connection;
 
   g_return_val_if_fail (HD_IS_STATUS_PLUGIN_ITEM (item), NULL);
-
-  priv = item->priv;
 
   /* Create a private connection */
   connection = dbus_bus_get_private (type, error);
@@ -419,14 +422,11 @@ hd_status_plugin_item_get_dbus_g_connection (HDStatusPluginItem  *item,
                                              DBusBusType          type,
                                              GError             **error)
 {
-  HDStatusPluginItemPrivate *priv;
   DBusGConnection *g_connection;
   DBusConnection *connection;
   GError *tmp_error = NULL;
 
   g_return_val_if_fail (HD_IS_STATUS_PLUGIN_ITEM (item), NULL);
-
-  priv = item->priv;
 
   /* Create a DBusGConnection (not private yet) */
   g_connection = dbus_g_bus_get (type, &tmp_error);

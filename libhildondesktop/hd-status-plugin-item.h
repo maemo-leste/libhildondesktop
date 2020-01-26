@@ -38,7 +38,6 @@ G_BEGIN_DECLS
 
 typedef struct _HDStatusPluginItem        HDStatusPluginItem;
 typedef struct _HDStatusPluginItemClass   HDStatusPluginItemClass;
-typedef struct _HDStatusPluginItemPrivate HDStatusPluginItemPrivate;
 
 /** HDStatusPluginItem:
  *
@@ -47,8 +46,6 @@ typedef struct _HDStatusPluginItemPrivate HDStatusPluginItemPrivate;
 struct _HDStatusPluginItem
 {
   GtkBin parent;
-
-  HDStatusPluginItemPrivate *priv;
 };
 
 struct _HDStatusPluginItemClass
