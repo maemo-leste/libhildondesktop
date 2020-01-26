@@ -36,7 +36,6 @@ G_BEGIN_DECLS
 
 typedef struct _HDNotification        HDNotification;
 typedef struct _HDNotificationClass   HDNotificationClass;
-typedef struct _HDNotificationPrivate HDNotificationPrivate;
 
 /** HDNotification:
  *
@@ -46,8 +45,6 @@ typedef struct _HDNotificationPrivate HDNotificationPrivate;
 struct _HDNotification
 {
   GObject parent;
-
-  HDNotificationPrivate *priv;
 };
 
 struct _HDNotificationClass

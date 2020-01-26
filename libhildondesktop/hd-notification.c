@@ -72,12 +72,18 @@ struct _HDNotificationPrivate
   gboolean closed : 1;
 };
 
-G_DEFINE_TYPE_WITH_CODE (HDNotification, hd_notification, G_TYPE_OBJECT, G_ADD_PRIVATE(HDNotification));
+typedef struct _HDNotificationPrivate HDNotificationPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (HDNotification, hd_notification, G_TYPE_OBJECT);
+
+#define HD_NOTIFICATION_GET_PRIVATE(notification) \
+  ((HDNotificationPrivate *)hd_notification_get_instance_private(notification))
 
 static void
 hd_notification_dispose (GObject *object)
 {
-  /*   HDNotificationPrivate *priv = HD_NOTIFICATION (object)->priv; */
+  /* HDNotificationPrivate *priv =
+      HD_NOTIFICATION_GET_PRIVATE (HD_NOTIFICATION (object)); */
 
   G_OBJECT_CLASS (hd_notification_parent_class)->dispose (object);
 }
@@ -85,7 +91,8 @@ hd_notification_dispose (GObject *object)
 static void
 hd_notification_finalize (GObject *object)
 {
-  HDNotificationPrivate *priv = HD_NOTIFICATION (object)->priv;
+  HDNotificationPrivate *priv =
+      HD_NOTIFICATION_GET_PRIVATE (HD_NOTIFICATION (object));
 
   g_free (priv->icon);
   priv->icon = NULL;
@@ -117,7 +124,8 @@ hd_notification_get_property (GObject      *object,
                               GValue       *value,
                               GParamSpec   *pspec)
 {
-  HDNotificationPrivate *priv = HD_NOTIFICATION (object)->priv;
+  HDNotificationPrivate *priv =
+      HD_NOTIFICATION_GET_PRIVATE (HD_NOTIFICATION (object));
 
   switch (prop_id)
     {
@@ -164,7 +172,8 @@ hd_notification_set_property (GObject      *object,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  HDNotificationPrivate *priv = HD_NOTIFICATION (object)->priv;
+  HDNotificationPrivate *priv =
+      HD_NOTIFICATION_GET_PRIVATE (HD_NOTIFICATION (object));
 
   switch (prop_id)
     {
@@ -299,9 +308,6 @@ hd_notification_class_init (HDNotificationClass *klass)
 static void
 hd_notification_init (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = (HDNotificationPrivate*)hd_notification_get_instance_private(notification);
-
-  notification->priv = priv;
 }
 
 /**
@@ -352,11 +358,9 @@ hd_notification_new (guint         id,
 guint
 hd_notification_get_id (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = notification->priv;
-
   g_return_val_if_fail (HD_IS_NOTIFICATION (notification), 0);
 
-  return priv->id;
+  return HD_NOTIFICATION_GET_PRIVATE (notification)->id;
 }
 
 /**
@@ -370,11 +374,9 @@ hd_notification_get_id (HDNotification *notification)
 const gchar *
 hd_notification_get_icon (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = notification->priv;
-
   g_return_val_if_fail (HD_IS_NOTIFICATION (notification), NULL);
 
-  return priv->icon;
+  return HD_NOTIFICATION_GET_PRIVATE (notification)->icon;
 }
 
 /**
@@ -388,11 +390,9 @@ hd_notification_get_icon (HDNotification *notification)
 const gchar *
 hd_notification_get_summary (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = notification->priv;
-
   g_return_val_if_fail (HD_IS_NOTIFICATION (notification), NULL);
 
-  return priv->summary;
+  return HD_NOTIFICATION_GET_PRIVATE (notification)->summary;
 }
 
 /**
@@ -406,11 +406,9 @@ hd_notification_get_summary (HDNotification *notification)
 const gchar *
 hd_notification_get_body (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = notification->priv;
-
   g_return_val_if_fail (HD_IS_NOTIFICATION (notification), NULL);
 
-  return priv->body;
+  return HD_NOTIFICATION_GET_PRIVATE (notification)->body;
 }
 
 /**
@@ -424,11 +422,9 @@ hd_notification_get_body (HDNotification *notification)
 gchar **
 hd_notification_get_actions (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = notification->priv;
-
   g_return_val_if_fail (HD_IS_NOTIFICATION (notification), NULL);
 
-  return priv->actions;
+  return HD_NOTIFICATION_GET_PRIVATE (notification)->actions;
 }
 
 /**
@@ -444,9 +440,11 @@ GValue *
 hd_notification_get_hint (HDNotification *notification,
                           const gchar    *key)
 {
-  HDNotificationPrivate *priv = notification->priv;
+  HDNotificationPrivate *priv;
 
   g_return_val_if_fail (HD_IS_NOTIFICATION (notification), NULL);
+
+  priv = HD_NOTIFICATION_GET_PRIVATE (notification);
 
   if (priv->hints != NULL)
     return g_hash_table_lookup (priv->hints, key);
@@ -465,11 +463,9 @@ hd_notification_get_hint (HDNotification *notification,
 GHashTable *
 hd_notification_get_hints (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = notification->priv;
-
   g_return_val_if_fail (HD_IS_NOTIFICATION (notification), NULL);
 
-  return priv->hints; 
+  return HD_NOTIFICATION_GET_PRIVATE (notification)->hints;
 }
 
 /**
@@ -483,9 +479,9 @@ hd_notification_get_hints (HDNotification *notification)
 const gchar *
 hd_notification_get_sender (HDNotification *notification)
 {
-  HDNotificationPrivate *priv = notification->priv;
+  g_return_val_if_fail (HD_IS_NOTIFICATION (notification), NULL);
 
-  return priv->sender;
+  return HD_NOTIFICATION_GET_PRIVATE (notification)->sender;
 }
 
 /**
@@ -597,15 +593,11 @@ hd_notification_get_dbus_cb (HDNotification *notification,
 void
 hd_notification_closed (HDNotification *notification)
 {
-  HDNotificationPrivate *priv;
-
   g_return_if_fail (HD_IS_NOTIFICATION (notification));
-
-  priv = notification->priv;
 
   g_signal_emit (notification, signals[CLOSED], 0);
 
-  priv->closed = TRUE;
+  HD_NOTIFICATION_GET_PRIVATE (notification)->closed = TRUE;
 }
 
 /**
@@ -617,13 +609,9 @@ hd_notification_closed (HDNotification *notification)
 gboolean
 hd_notification_is_closed (HDNotification *notification)
 {
-  HDNotificationPrivate *priv;
-
   g_return_val_if_fail (HD_IS_NOTIFICATION (notification), FALSE);
 
-  priv = notification->priv;
-
-  return priv->closed;
+  return HD_NOTIFICATION_GET_PRIVATE (notification)->closed;
 }
 /**
  * hd_notification_updated:
