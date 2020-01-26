@@ -68,6 +68,8 @@ struct _HDShortcutsPrivate
   GSList *current_list;
 };
 
+typedef struct _HDShortcutsPrivate HDShortcutsPrivate;
+
 enum
 {
   PROP_0,
@@ -76,14 +78,17 @@ enum
   PROP_THROTTLED,
 };
 
-G_DEFINE_TYPE_WITH_CODE (HDShortcuts, hd_shortcuts, G_TYPE_OBJECT, G_ADD_PRIVATE(HDShortcuts));
+G_DEFINE_TYPE_WITH_PRIVATE (HDShortcuts, hd_shortcuts, G_TYPE_OBJECT);
+
+#define HD_SHORTCUTS_GET_PRIVATE(shortcuts) \
+  ((HDShortcutsPrivate *)hd_shortcuts_get_instance_private (shortcuts))
 
 static gboolean
 delete_event_cb (GtkWidget   *shortcut,
                  GdkEvent    *event,
                  HDShortcuts *shortcuts)
 {
-  HDShortcutsPrivate *priv = shortcuts->priv;
+  HDShortcutsPrivate *priv = HD_SHORTCUTS_GET_PRIVATE (shortcuts);
   gchar *plugin_id;
   GSList *l;
   GError *error = NULL;
@@ -197,7 +202,7 @@ create_sync_lists (GSList         *old,
 static void
 shortcuts_sync (HDShortcuts *shortcuts)
 {
-  HDShortcutsPrivate *priv = shortcuts->priv;
+  HDShortcutsPrivate *priv = HD_SHORTCUTS_GET_PRIVATE (shortcuts);
   GHashTableIter iter;
   gpointer key;
   GSList *old = NULL, *new = NULL, *i;
@@ -299,7 +304,7 @@ shortcuts_notify (GConfClient *client,
                   GConfEntry  *entry,
                   HDShortcuts *shortcuts)
 {
-  HDShortcutsPrivate *priv = shortcuts->priv;
+  HDShortcutsPrivate *priv = HD_SHORTCUTS_GET_PRIVATE (shortcuts);
 
   g_slist_foreach (priv->current_list, (GFunc) g_free, NULL);
   g_slist_free (priv->current_list);
@@ -315,7 +320,7 @@ hd_shortcuts_get_property (GObject      *object,
                            GValue       *value,
                            GParamSpec   *pspec)
 {
-  HDShortcutsPrivate *priv = HD_SHORTCUTS (object)->priv;
+  HDShortcutsPrivate *priv = HD_SHORTCUTS_GET_PRIVATE (HD_SHORTCUTS (object));
 
   switch (prop_id) {
     case PROP_GCONF_KEY:
@@ -341,7 +346,7 @@ hd_shortcuts_set_property (GObject      *object,
                            const GValue *value,
                            GParamSpec   *pspec)
 {
-  HDShortcutsPrivate *priv = HD_SHORTCUTS (object)->priv;
+  HDShortcutsPrivate *priv = HD_SHORTCUTS_GET_PRIVATE (HD_SHORTCUTS (object));
 
   switch (prop_id) {
     case PROP_GCONF_KEY:
@@ -374,7 +379,7 @@ static void
 hd_shortcuts_constructed (GObject *object)
 {
   HDShortcuts *shortcuts = HD_SHORTCUTS (object);
-  HDShortcutsPrivate *priv = shortcuts->priv;
+  HDShortcutsPrivate *priv = HD_SHORTCUTS_GET_PRIVATE (shortcuts);
 
   /* Add notification of shortcuts key */
   gconf_client_notify_add (priv->gconf_client,
@@ -391,7 +396,7 @@ hd_shortcuts_constructed (GObject *object)
 static void
 hd_shortcuts_finalize (GObject *object)
 {
-  HDShortcutsPrivate *priv = HD_SHORTCUTS (object)->priv;
+  HDShortcutsPrivate *priv = HD_SHORTCUTS_GET_PRIVATE (HD_SHORTCUTS (object));
 
   g_slist_foreach (priv->current_list, (GFunc) g_free, NULL);
   g_slist_free (priv->current_list);
@@ -444,12 +449,13 @@ hd_shortcuts_class_init (HDShortcutsClass *klass)
 static void
 hd_shortcuts_init (HDShortcuts *shortcuts)
 {
-  shortcuts->priv = (HDShortcutsPrivate*)hd_shortcuts_get_instance_private(shortcuts);
-  shortcuts->priv->gconf_client = gconf_client_get_default ();
-  shortcuts->priv->applets = g_hash_table_new_full (g_str_hash,
-                                                    g_str_equal,
-                                                    (GDestroyNotify) g_free,
-                                                    (GDestroyNotify) gtk_widget_destroy);
+  HDShortcutsPrivate *priv = HD_SHORTCUTS_GET_PRIVATE (shortcuts);
+
+  priv->gconf_client = gconf_client_get_default ();
+  priv->applets = g_hash_table_new_full (g_str_hash,
+                                         g_str_equal,
+                                         (GDestroyNotify) g_free,
+                                         (GDestroyNotify) gtk_widget_destroy);
 }
 
 /**

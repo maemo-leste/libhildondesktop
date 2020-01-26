@@ -37,7 +37,6 @@ G_BEGIN_DECLS
 
 typedef struct _HDShortcuts        HDShortcuts;
 typedef struct _HDShortcutsClass   HDShortcutsClass;
-typedef struct _HDShortcutsPrivate HDShortcutsPrivate;
 
 /** HDShortcuts:
  *
@@ -46,8 +45,6 @@ typedef struct _HDShortcutsPrivate HDShortcutsPrivate;
 struct _HDShortcuts
 {
   GObject parent;
-
-  HDShortcutsPrivate *priv;
 };
 
 struct _HDShortcutsClass
