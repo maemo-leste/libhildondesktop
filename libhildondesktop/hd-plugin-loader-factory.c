@@ -53,8 +53,12 @@ struct _HDPluginLoaderFactoryPrivate
   HDPluginLoader  *(*get_instance)  (void);
 };
 
-G_DEFINE_TYPE_WITH_CODE (HDPluginLoaderFactory, hd_plugin_loader_factory, G_TYPE_OBJECT, G_ADD_PRIVATE(HDPluginLoaderFactory));
+typedef struct _HDPluginLoaderFactoryPrivate HDPluginLoaderFactoryPrivate;
 
+G_DEFINE_TYPE_WITH_PRIVATE (HDPluginLoaderFactory, hd_plugin_loader_factory, G_TYPE_OBJECT);
+
+#define HD_PLUGIN_LOADER_FACTORY_GET_PRIVATE(factory) \
+  ((HDPluginLoaderFactoryPrivate *)hd_plugin_loader_factory_get_instance_private (factory))
 
 static int callback_pending = 0;
 
@@ -91,38 +95,38 @@ hd_plugin_loader_factory_load_modules (HDPluginLoaderFactory *factory)
   GError *error = NULL;
   GDir *path_modules;
   const gchar *name;
+  HDPluginLoaderFactoryPrivate *priv =
+      HD_PLUGIN_LOADER_FACTORY_GET_PRIVATE (factory);
 
   /* FIXME: this is done because g_hash_table_remove_all is not 
      available in glib <= 2.12 */
-  g_hash_table_foreach_remove (factory->priv->modules, 
+  g_hash_table_foreach_remove (priv->modules,
                                hd_plugin_loader_factory_remove_module,
                                NULL);
 
   path_modules = g_dir_open (HD_PLUGIN_LOADER_MODULES_PATH, 0, &error);
 
-  if (factory->priv->monitor)
+  if (priv->monitor)
     {
-      g_file_monitor_cancel (factory->priv->monitor);
-      g_object_unref (factory->priv->monitor);
+      g_file_monitor_cancel (priv->monitor);
+      g_object_unref (priv->monitor);
     }
 
-  if (factory->priv->file)
+  if (priv->file)
     {
-      g_object_unref (factory->priv->file);
+      g_object_unref (priv->file);
     }
 
   if (error != NULL)
     { 
       g_error_free (error);
 
-      factory->priv->file = g_file_new_for_path (HD_DESKTOP_MODULE_PATH);
+      priv->file = g_file_new_for_path (HD_DESKTOP_MODULE_PATH);
 
-      factory->priv->monitor =
-        g_file_monitor_directory (factory->priv->file,
-                                  G_FILE_MONITOR_NONE,
-                                  NULL,NULL);
+      priv->monitor =
+        g_file_monitor_directory (priv->file, G_FILE_MONITOR_NONE, NULL, NULL);
 
-      g_signal_connect (G_OBJECT (factory->priv->monitor),
+      g_signal_connect (G_OBJECT (priv->monitor),
                         "changed",
                         G_CALLBACK (hd_plugin_loader_factory_dir_changed),
                         (gpointer)factory);
@@ -145,10 +149,10 @@ hd_plugin_loader_factory_load_modules (HDPluginLoaderFactory *factory)
             {
               if (g_module_symbol (module,
                                    MODULE_LOAD_SYMBOL,
-                                   (void *) &factory->priv->load_module))
+                                   (void *) &priv->load_module))
                 {
-                  g_hash_table_insert (factory->priv->modules,
-                                       g_strdup (factory->priv->load_module ()),
+                  g_hash_table_insert (priv->modules,
+                                       g_strdup (priv->load_module ()),
                                        module);
                 }
               else
@@ -166,12 +170,12 @@ hd_plugin_loader_factory_load_modules (HDPluginLoaderFactory *factory)
 
   g_dir_close (path_modules);
 
-  factory->priv->file = g_file_new_for_path (HD_PLUGIN_LOADER_MODULES_PATH);
-  factory->priv->monitor =
-    g_file_monitor_directory (factory->priv->file,
+  priv->file = g_file_new_for_path (HD_PLUGIN_LOADER_MODULES_PATH);
+  priv->monitor =
+    g_file_monitor_directory (priv->file,
                               G_FILE_MONITOR_NONE,
                               NULL,NULL);
-  g_signal_connect (G_OBJECT (factory->priv->monitor),
+  g_signal_connect (G_OBJECT (priv->monitor),
                     "changed",
                     G_CALLBACK (hd_plugin_loader_factory_dir_changed),
                     (gpointer)factory);
@@ -182,22 +186,23 @@ hd_plugin_loader_factory_load_modules (HDPluginLoaderFactory *factory)
 static void
 hd_plugin_loader_factory_init (HDPluginLoaderFactory *factory)
 {
-  factory->priv = (HDPluginLoaderFactoryPrivate*)hd_plugin_loader_factory_get_instance_private(factory);
+  HDPluginLoaderFactoryPrivate *priv =
+      HD_PLUGIN_LOADER_FACTORY_GET_PRIVATE (factory);
 
-  factory->priv->registry =
+  priv->registry =
     g_hash_table_new_full (g_str_hash, 
                            g_str_equal,
                            (GDestroyNotify) g_free,
                            (GDestroyNotify) g_object_unref);
 
-  factory->priv->modules  = 
+  priv->modules  =
     g_hash_table_new_full (g_str_hash, 
                            g_str_equal,
                            (GDestroyNotify) g_free,
                            (GDestroyNotify) g_module_close);
 
-  factory->priv->monitor = NULL;
-  factory->priv->file = NULL;
+  priv->monitor = NULL;
+  priv->file = NULL;
 
   hd_plugin_loader_factory_load_modules (factory);
 }
@@ -210,7 +215,8 @@ hd_plugin_loader_factory_finalize (GObject *object)
   g_return_if_fail (object != NULL);
   g_return_if_fail (HD_IS_PLUGIN_LOADER_FACTORY (object));
 
-  priv = HD_PLUGIN_LOADER_FACTORY (object)->priv;
+  priv =
+      HD_PLUGIN_LOADER_FACTORY_GET_PRIVATE (HD_PLUGIN_LOADER_FACTORY (object));
 
   if (priv->registry != NULL) 
     {
@@ -271,7 +277,7 @@ hd_plugin_loader_factory_create (HDPluginLoaderFactory  *factory,
   g_return_val_if_fail (factory != NULL, NULL);
   g_return_val_if_fail (HD_IS_PLUGIN_LOADER_FACTORY (factory), NULL);
 
-  priv = factory->priv;
+  priv = HD_PLUGIN_LOADER_FACTORY_GET_PRIVATE (factory);
 
   keyfile = g_key_file_new ();
 
@@ -327,7 +333,7 @@ hd_plugin_loader_factory_create (HDPluginLoaderFactory  *factory,
             {
               if (g_module_symbol (module,
                                    MODULE_GET_INSTANCE_SYMBOL,
-                                   (void *) &factory->priv->get_instance))
+                                   (void *) &priv->get_instance))
                 {
                   loader = priv->get_instance ();
 

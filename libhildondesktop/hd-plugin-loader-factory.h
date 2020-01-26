@@ -33,7 +33,6 @@ G_BEGIN_DECLS
 
 typedef struct _HDPluginLoaderFactory        HDPluginLoaderFactory;
 typedef struct _HDPluginLoaderFactoryClass   HDPluginLoaderFactoryClass;
-typedef struct _HDPluginLoaderFactoryPrivate HDPluginLoaderFactoryPrivate;
 
 #define HD_TYPE_PLUGIN_LOADER_FACTORY            (hd_plugin_loader_factory_get_type ())
 #define HD_PLUGIN_LOADER_FACTORY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), HD_TYPE_PLUGIN_LOADER_FACTORY, HDPluginLoaderFactory))
@@ -47,8 +46,6 @@ typedef struct _HDPluginLoaderFactoryPrivate HDPluginLoaderFactoryPrivate;
 struct _HDPluginLoaderFactory 
 {
   GObject gobject;
-
-  HDPluginLoaderFactoryPrivate *priv;
 };
 
 struct _HDPluginLoaderFactoryClass 
