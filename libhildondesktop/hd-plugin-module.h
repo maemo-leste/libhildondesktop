@@ -45,13 +45,10 @@ G_BEGIN_DECLS
 
 typedef struct _HDPluginModule        HDPluginModule;
 typedef struct _HDPluginModuleClass   HDPluginModuleClass;
-typedef struct _HDPluginModulePrivate HDPluginModulePrivate;
 
 struct _HDPluginModule
 {
   GTypeModule parent;
-
-  HDPluginModulePrivate  *priv;
 };
 
 struct _HDPluginModuleClass
