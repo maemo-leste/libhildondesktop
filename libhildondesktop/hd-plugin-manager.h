@@ -41,7 +41,6 @@ G_BEGIN_DECLS
 
 typedef struct _HDPluginManager        HDPluginManager;
 typedef struct _HDPluginManagerClass   HDPluginManagerClass;
-typedef struct _HDPluginManagerPrivate HDPluginManagerPrivate;
 
 typedef guint (*HDLoadPriorityFunc) (const gchar *plugin_id,
                                      GKeyFile    *keyfile,
@@ -50,8 +49,6 @@ typedef guint (*HDLoadPriorityFunc) (const gchar *plugin_id,
 struct _HDPluginManager 
 {
   HDPluginConfiguration parent;
-
-  HDPluginManagerPrivate *priv;
 };
 
 struct _HDPluginManagerClass 
