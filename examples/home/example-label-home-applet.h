@@ -35,13 +35,10 @@ G_BEGIN_DECLS
 
 typedef struct _ExampleLabelHomeApplet        ExampleLabelHomeApplet;
 typedef struct _ExampleLabelHomeAppletClass   ExampleLabelHomeAppletClass;
-typedef struct _ExampleLabelHomeAppletPrivate ExampleLabelHomeAppletPrivate;
 
 struct _ExampleLabelHomeApplet
 {
   HDHomePluginItem       parent;
-
-  ExampleLabelHomeAppletPrivate       *priv;
 };
 
 struct _ExampleLabelHomeAppletClass

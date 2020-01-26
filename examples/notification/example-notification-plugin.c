@@ -34,10 +34,12 @@ struct _ExampleNotificationPluginPrivate
   gpointer data;
 };
 
+typedef struct _ExampleNotificationPluginPrivate ExampleNotificationPluginPrivate;
+
 static void example_notification_plugin_notification_plugin_iface_init (HDNotificationPluginIface *iface);
 
 G_DEFINE_DYNAMIC_TYPE_EXTENDED (ExampleNotificationPlugin, example_notification_plugin, G_TYPE_OBJECT, 0,
-                                G_ADD_PRIVATE(ExampleNotificationPlugin)
+                                G_ADD_PRIVATE_DYNAMIC(ExampleNotificationPlugin)
                                 G_IMPLEMENT_INTERFACE (HD_TYPE_NOTIFICATION_PLUGIN,
                                                        example_notification_plugin_notification_plugin_iface_init));
 HD_PLUGIN_MODULE_SYMBOLS (example_notification_plugin);

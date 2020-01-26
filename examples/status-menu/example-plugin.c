@@ -7,7 +7,9 @@ struct _ExamplePluginPrivate
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExamplePlugin, example_plugin, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExamplePlugin), , );
+typedef struct _ExamplePluginPrivate ExamplePluginPrivate;
+
+HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE (ExamplePlugin, example_plugin, HD_TYPE_STATUS_MENU_ITEM);
 
 static void
 visibility_changed (HDStatusMenuItem *plugin)
@@ -41,8 +43,6 @@ example_plugin_init (ExamplePlugin *menu_item)
 {
   GtkWidget *button;
   GdkPixbuf *icon = NULL;
-
-  menu_item->priv = (ExamplePluginPrivate*)example_plugin_get_instance_private(menu_item);
 
   /* A HildonButton */
   button = hildon_button_new_with_text (HILDON_SIZE_FINGER_HEIGHT | HILDON_SIZE_AUTO_WIDTH,

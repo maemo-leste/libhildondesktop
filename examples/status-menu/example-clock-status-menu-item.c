@@ -34,7 +34,13 @@ struct _ExampleClockStatusMenuItemPrivate
   guint         timeout_id;
 };
 
-HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleClockStatusMenuItem, example_clock_status_menu_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleClockStatusMenuItem), , );
+typedef struct _ExampleClockStatusMenuItemPrivate ExampleClockStatusMenuItemPrivate;
+
+HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE (ExampleClockStatusMenuItem, example_clock_status_menu_item, HD_TYPE_STATUS_MENU_ITEM);
+
+#define EXAMPLE_CLOCK_STATUS_MENU_ITEM_GET_PRIVATE(menu_item) \
+((ExampleClockStatusMenuItemPrivate *)example_clock_status_menu_item_get_instance_private (menu_item))
+
 
 static void
 example_clock_status_menu_item_class_finalize (ExampleClockStatusMenuItemClass *klass)
@@ -45,11 +51,13 @@ static void
 example_clock_status_menu_item_dispose (GObject *object)
 {
   ExampleClockStatusMenuItem *menu_item = EXAMPLE_CLOCK_STATUS_MENU_ITEM (object);
-  
-  if (menu_item->priv->timeout_id != 0)
+  ExampleClockStatusMenuItemPrivate *priv =
+      EXAMPLE_CLOCK_STATUS_MENU_ITEM_GET_PRIVATE (menu_item);
+
+  if (priv->timeout_id != 0)
   {
-    g_source_remove (menu_item->priv->timeout_id);
-    menu_item->priv->timeout_id = 0;
+    g_source_remove (priv->timeout_id);
+    priv->timeout_id = 0;
   }
 
   G_OBJECT_CLASS (example_clock_status_menu_item_parent_class)->dispose (object);
@@ -66,6 +74,8 @@ example_clock_status_menu_item_class_init (ExampleClockStatusMenuItemClass *klas
 static gboolean
 example_clock_status_menu_item_timeout_cb (ExampleClockStatusMenuItem *menu_item)
 {
+  ExampleClockStatusMenuItemPrivate *priv =
+      EXAMPLE_CLOCK_STATUS_MENU_ITEM_GET_PRIVATE (menu_item);
   char time_str[200];
   time_t t;
   struct tm *tmp;
@@ -77,11 +87,11 @@ example_clock_status_menu_item_timeout_cb (ExampleClockStatusMenuItem *menu_item
 
   strftime (time_str, sizeof (time_str), "%d.%m.%Y %H:%M:%S", tmp);
 
-  gtk_button_set_label (GTK_BUTTON (menu_item->priv->label), time_str);
+  gtk_button_set_label (GTK_BUTTON (priv->label), time_str);
 
   strftime (time_str, sizeof (time_str), "<span font_desc=\"12\">%H:%M</span>", tmp);
 
-  gtk_label_set_markup (GTK_LABEL (menu_item->priv->status_area_label), time_str);
+  gtk_label_set_markup (GTK_LABEL (priv->status_area_label), time_str);
 
   GDK_THREADS_LEAVE ();
 
@@ -92,33 +102,33 @@ static void
 example_clock_status_menu_item_init (ExampleClockStatusMenuItem *menu_item)
 {
   GtkWidget *status_area_box;
+  ExampleClockStatusMenuItemPrivate *priv =
+      EXAMPLE_CLOCK_STATUS_MENU_ITEM_GET_PRIVATE (menu_item);
 
-  menu_item->priv = (ExampleClockStatusMenuItemPrivate*)example_clock_status_menu_item_get_instance_private(menu_item);
+  priv->label = gtk_button_new_with_label ("...");
+  gtk_container_set_border_width (GTK_CONTAINER (priv->label), 3);
+  gtk_widget_show (priv->label);
 
-  menu_item->priv->label = gtk_button_new_with_label ("...");
-  gtk_container_set_border_width (GTK_CONTAINER (menu_item->priv->label), 3);
-  gtk_widget_show (menu_item->priv->label);
-
-  gtk_container_add (GTK_CONTAINER (menu_item), menu_item->priv->label);
+  gtk_container_add (GTK_CONTAINER (menu_item), priv->label);
 
   /* Set Status Area widget */
   status_area_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (status_area_box);
 
-  menu_item->priv->status_area_label = gtk_label_new ("...");
-  gtk_widget_show (menu_item->priv->status_area_label);
+  priv->status_area_label = gtk_label_new ("...");
+  gtk_widget_show (priv->status_area_label);
 
-  gtk_box_pack_start (GTK_BOX (status_area_box), menu_item->priv->status_area_label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (status_area_box), priv->status_area_label, FALSE, FALSE, 0);
 
   hd_status_plugin_item_set_status_area_widget (HD_STATUS_PLUGIN_ITEM (menu_item), status_area_box);
 
   /* Add timeout */
   example_clock_status_menu_item_timeout_cb (EXAMPLE_CLOCK_STATUS_MENU_ITEM (menu_item));
-  menu_item->priv->timeout_id = hd_status_plugin_item_heartbeat_signal_add (HD_STATUS_PLUGIN_ITEM (menu_item),
-                                                                            0, 60,
-                                                                            (GSourceFunc) example_clock_status_menu_item_timeout_cb,
-                                                                            menu_item,
-                                                                            NULL);
+  priv->timeout_id = hd_status_plugin_item_heartbeat_signal_add (HD_STATUS_PLUGIN_ITEM (menu_item),
+                                                                 0, 60,
+                                                                 (GSourceFunc) example_clock_status_menu_item_timeout_cb,
+                                                                 menu_item,
+                                                                 NULL);
 
   /* permanent visible */
   gtk_widget_show (GTK_WIDGET (menu_item));

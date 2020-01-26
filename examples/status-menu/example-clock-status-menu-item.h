@@ -35,13 +35,10 @@ G_BEGIN_DECLS
 
 typedef struct _ExampleClockStatusMenuItem        ExampleClockStatusMenuItem;
 typedef struct _ExampleClockStatusMenuItemClass   ExampleClockStatusMenuItemClass;
-typedef struct _ExampleClockStatusMenuItemPrivate ExampleClockStatusMenuItemPrivate;
 
 struct _ExampleClockStatusMenuItem
 {
   HDStatusMenuItem       parent;
-
-  ExampleClockStatusMenuItemPrivate       *priv;
 };
 
 struct _ExampleClockStatusMenuItemClass

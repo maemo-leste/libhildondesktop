@@ -33,7 +33,9 @@ struct _ExampleVolumeStatusMenuItemPrivate
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleVolumeStatusMenuItem, example_volume_status_menu_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleVolumeStatusMenuItem), , );
+typedef struct _ExampleVolumeStatusMenuItemPrivate ExampleVolumeStatusMenuItemPrivate;
+
+HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE (ExampleVolumeStatusMenuItem, example_volume_status_menu_item, HD_TYPE_STATUS_MENU_ITEM);
 
 static void
 example_volume_status_menu_item_class_finalize (ExampleVolumeStatusMenuItemClass *klass)

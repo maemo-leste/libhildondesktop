@@ -35,13 +35,10 @@ G_BEGIN_DECLS
 
 typedef struct _ExampleBatteryStatusAreaItem        ExampleBatteryStatusAreaItem;
 typedef struct _ExampleBatteryStatusAreaItemClass   ExampleBatteryStatusAreaItemClass;
-typedef struct _ExampleBatteryStatusAreaItemPrivate ExampleBatteryStatusAreaItemPrivate;
 
 struct _ExampleBatteryStatusAreaItem
 {
   HDStatusMenuItem          parent;
-
-  ExampleBatteryStatusAreaItemPrivate *priv;
 };
 
 struct _ExampleBatteryStatusAreaItemClass

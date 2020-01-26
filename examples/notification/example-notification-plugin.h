@@ -35,13 +35,10 @@ G_BEGIN_DECLS
 
 typedef struct _ExampleNotificationPlugin        ExampleNotificationPlugin;
 typedef struct _ExampleNotificationPluginClass   ExampleNotificationPluginClass;
-typedef struct _ExampleNotificationPluginPrivate ExampleNotificationPluginPrivate;
 
 struct _ExampleNotificationPlugin
 {
   GObject       parent;
-
-  ExampleNotificationPluginPrivate       *priv;
 };
 
 struct _ExampleNotificationPluginClass

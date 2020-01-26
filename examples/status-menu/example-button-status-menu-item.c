@@ -33,7 +33,13 @@ struct _ExampleButtonStatusMenuItemPrivate
   guint timeout_id;
 };
 
-HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleButtonStatusMenuItem, example_button_status_menu_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleButtonStatusMenuItem), , );
+typedef struct _ExampleButtonStatusMenuItemPrivate ExampleButtonStatusMenuItemPrivate;
+
+HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE (ExampleButtonStatusMenuItem, example_button_status_menu_item, HD_TYPE_STATUS_MENU_ITEM);
+
+#define EXAMPLE_BUTTON_STATUS_MENU_ITEM_GET_PRIVATE(menu_item) \
+  ((ExampleButtonStatusMenuItemPrivate *)example_button_status_menu_item_get_instance_private(menu_item))
+
 
 static void
 example_button_status_menu_item_class_finalize (ExampleButtonStatusMenuItemClass *klass)
@@ -44,11 +50,13 @@ static void
 example_button_status_menu_item_dispose (GObject *object)
 {
   ExampleButtonStatusMenuItem *menu_item = EXAMPLE_BUTTON_STATUS_MENU_ITEM (object);
-  
-  if (menu_item->priv->timeout_id != 0)
+  ExampleButtonStatusMenuItemPrivate *priv =
+      EXAMPLE_BUTTON_STATUS_MENU_ITEM_GET_PRIVATE (menu_item);
+
+  if (priv->timeout_id != 0)
   {
-    g_source_remove (menu_item->priv->timeout_id);
-    menu_item->priv->timeout_id = 0;
+    g_source_remove (priv->timeout_id);
+    priv->timeout_id = 0;
   }
 
   G_OBJECT_CLASS (example_button_status_menu_item_parent_class)->dispose (object);
@@ -97,8 +105,8 @@ static void
 example_button_status_menu_item_init (ExampleButtonStatusMenuItem *menu_item)
 {
   GtkWidget *button;
-
-  menu_item->priv = (ExampleButtonStatusMenuItemPrivate*)example_button_status_menu_item_get_instance_private(menu_item);
+  ExampleButtonStatusMenuItemPrivate *priv =
+      EXAMPLE_BUTTON_STATUS_MENU_ITEM_GET_PRIVATE (menu_item);
 
   /*
   button = hildon_button_new (HILDON_BUTTON_WITH_VERTICAL_VALUE | 
@@ -117,5 +125,5 @@ example_button_status_menu_item_init (ExampleButtonStatusMenuItem *menu_item)
    * gtk_widget_show isn't called. Instead a timeout is installed which shows and hide
    * the item
    */
-  menu_item->priv->timeout_id = gdk_threads_add_timeout (10000, (GSourceFunc) example_button_status_menu_item_timeout_cb, menu_item);
+  priv->timeout_id = gdk_threads_add_timeout (10000, (GSourceFunc) example_button_status_menu_item_timeout_cb, menu_item);
 }

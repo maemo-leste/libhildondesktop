@@ -35,7 +35,9 @@ struct _ExampleLabelHomeAppletPrivate
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleLabelHomeApplet, example_label_home_applet, HD_TYPE_HOME_PLUGIN_ITEM, G_ADD_PRIVATE(ExampleLabelHomeApplet), , );
+typedef struct _ExampleLabelHomeAppletPrivate ExampleLabelHomeAppletPrivate;
+
+HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE (ExampleLabelHomeApplet, example_label_home_applet, HD_TYPE_HOME_PLUGIN_ITEM);
 
 static void
 example_label_home_applet_class_finalize (ExampleLabelHomeAppletClass *klass)
@@ -105,8 +107,6 @@ static void
 example_label_home_applet_init (ExampleLabelHomeApplet *applet)
 {
   GtkWidget *label;
-
-  applet->priv = (ExampleLabelHomeAppletPrivate*)example_label_home_applet_get_instance_private(applet);
 
   label = gtk_label_new ("An example applet");
   gtk_widget_show (label);

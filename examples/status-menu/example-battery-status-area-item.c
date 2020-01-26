@@ -34,7 +34,9 @@ struct _ExampleBatteryStatusAreaItemPrivate
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleBatteryStatusAreaItem, example_battery_status_area_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleBatteryStatusAreaItem), , );
+typedef struct _ExampleBatteryStatusAreaItemPrivate ExampleBatteryStatusAreaItemPrivate;
+
+HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE (ExampleBatteryStatusAreaItem, example_battery_status_area_item, HD_TYPE_STATUS_MENU_ITEM);
 
 static void
 example_battery_status_area_item_class_finalize (ExampleBatteryStatusAreaItemClass *klass)
@@ -50,8 +52,6 @@ static void
 example_battery_status_area_item_init (ExampleBatteryStatusAreaItem *menu_item)
 {
   GdkPixbuf *pixbuf;
-
-  menu_item->priv = (ExampleBatteryStatusAreaItemPrivate*)example_battery_status_area_item_get_instance_private(menu_item);
 
   /* Show a Status Area icon */
   pixbuf = gdk_pixbuf_new_from_file (HILDON_DATA_DIR "/example-status-area-icon-battery.png",

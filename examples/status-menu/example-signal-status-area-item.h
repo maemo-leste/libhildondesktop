@@ -35,13 +35,10 @@ G_BEGIN_DECLS
 
 typedef struct _ExampleSignalStatusAreaItem        ExampleSignalStatusAreaItem;
 typedef struct _ExampleSignalStatusAreaItemClass   ExampleSignalStatusAreaItemClass;
-typedef struct _ExampleSignalStatusAreaItemPrivate ExampleSignalStatusAreaItemPrivate;
 
 struct _ExampleSignalStatusAreaItem
 {
   HDStatusMenuItem          parent;
-
-  ExampleSignalStatusAreaItemPrivate *priv;
 };
 
 struct _ExampleSignalStatusAreaItemClass

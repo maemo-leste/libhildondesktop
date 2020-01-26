@@ -14,13 +14,10 @@ G_BEGIN_DECLS
 
 typedef struct _ExamplePlugin        ExamplePlugin;
 typedef struct _ExamplePluginClass   ExamplePluginClass;
-typedef struct _ExamplePluginPrivate ExamplePluginPrivate;
 
 struct _ExamplePlugin
 {
   HDStatusMenuItem       parent;
-
-  ExamplePluginPrivate  *priv;
 };
 
 struct _ExamplePluginClass

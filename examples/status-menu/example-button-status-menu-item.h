@@ -35,13 +35,10 @@ G_BEGIN_DECLS
 
 typedef struct _ExampleButtonStatusMenuItem        ExampleButtonStatusMenuItem;
 typedef struct _ExampleButtonStatusMenuItemClass   ExampleButtonStatusMenuItemClass;
-typedef struct _ExampleButtonStatusMenuItemPrivate ExampleButtonStatusMenuItemPrivate;
 
 struct _ExampleButtonStatusMenuItem
 {
   HDStatusMenuItem       parent;
-
-  ExampleButtonStatusMenuItemPrivate       *priv;
 };
 
 struct _ExampleButtonStatusMenuItemClass

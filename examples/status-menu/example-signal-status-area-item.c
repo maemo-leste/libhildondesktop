@@ -34,7 +34,9 @@ struct _ExampleSignalStatusAreaItemPrivate
   gpointer data;
 };
 
-HD_DEFINE_PLUGIN_MODULE_EXTENDED (ExampleSignalStatusAreaItem, example_signal_status_area_item, HD_TYPE_STATUS_MENU_ITEM, G_ADD_PRIVATE(ExampleSignalStatusAreaItem), , );
+typedef struct _ExampleSignalStatusAreaItemPrivate ExampleSignalStatusAreaItemPrivate;
+
+HD_DEFINE_PLUGIN_MODULE_WITH_PRIVATE (ExampleSignalStatusAreaItem, example_signal_status_area_item, HD_TYPE_STATUS_MENU_ITEM);
 
 static void
 example_signal_status_area_item_class_finalize (ExampleSignalStatusAreaItemClass *klass)
@@ -50,8 +52,6 @@ static void
 example_signal_status_area_item_init (ExampleSignalStatusAreaItem *menu_item)
 {
   GdkPixbuf *pixbuf;
-
-  menu_item->priv = (ExampleSignalStatusAreaItemPrivate*)example_signal_status_area_item_get_instance_private(menu_item);
 
   /* Show a Status Area icon */
   pixbuf = gdk_pixbuf_new_from_file (HILDON_DATA_DIR "/example-status-area-icon-signal.png",
