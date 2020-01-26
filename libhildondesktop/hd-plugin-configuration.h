@@ -40,13 +40,10 @@ G_BEGIN_DECLS
 
 typedef struct _HDPluginConfiguration        HDPluginConfiguration;
 typedef struct _HDPluginConfigurationClass   HDPluginConfigurationClass;
-typedef struct _HDPluginConfigurationPrivate HDPluginConfigurationPrivate;
 
 struct _HDPluginConfiguration 
 {
   GObject gobject;
-
-  HDPluginConfigurationPrivate *priv;
 };
 
 struct _HDPluginConfigurationClass 

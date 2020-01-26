@@ -73,6 +73,8 @@ struct _HDPluginConfigurationPrivate
   gboolean       startup;
 };
 
+typedef struct _HDPluginConfigurationPrivate HDPluginConfigurationPrivate;
+
 static guint plugin_configuration_signals [LAST_SIGNAL] = { 0 };
 
 /** 
@@ -87,7 +89,10 @@ static guint plugin_configuration_signals [LAST_SIGNAL] = { 0 };
  * 
  **/
 
-G_DEFINE_TYPE_WITH_CODE (HDPluginConfiguration, hd_plugin_configuration, G_TYPE_OBJECT, G_ADD_PRIVATE(HDPluginConfiguration));
+G_DEFINE_TYPE_WITH_PRIVATE (HDPluginConfiguration, hd_plugin_configuration, G_TYPE_OBJECT);
+
+#define HD_PLUGIN_CONFIGURATION_GET_PRIVATE(configuration) \
+  ((HDPluginConfigurationPrivate *)hd_plugin_configuration_get_instance_private(configuration))
 
 static void
 hd_plugin_configuration_remove_plugin_module (HDPluginConfiguration *configuration,
@@ -103,7 +108,8 @@ hd_plugin_configuration_plugin_dir_changed (GFileMonitor      *monitor,
                                             HDPluginConfiguration *configuration)
 {
   gchar *info_uri = g_file_get_uri (info);
-  HDPluginConfigurationPrivate *priv = configuration->priv;
+  HDPluginConfigurationPrivate *priv =
+      HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
   /*
   static char* event_string[] = {"changed", "deleted", "startexecuting", "stopexecuting",
   "created", "metadate-changed"};
@@ -162,11 +168,9 @@ hd_plugin_configuration_plugin_dir_changed (GFileMonitor      *monitor,
 static void
 hd_plugin_configuration_init (HDPluginConfiguration *configuration)
 {
-  HDPluginConfigurationPrivate *priv;
-
   /* Get private structure */
-  configuration->priv = (HDPluginConfigurationPrivate*)hd_plugin_configuration_get_instance_private(configuration);
-  priv = configuration->priv;
+  HDPluginConfigurationPrivate *priv =
+      HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
 
   priv->startup = TRUE;
 
@@ -178,12 +182,7 @@ static void
 hd_plugin_configuration_plugin_module_added (HDPluginConfiguration *configuration,
                                              const gchar     *desktop_file)
 {
-//HDPluginConfigurationPrivate *priv;
-
   g_return_if_fail (HD_IS_PLUGIN_CONFIGURATION (configuration));
-
-//priv = HD_PLUGIN_CONFIGURATION (configuration)->priv;
-
 }
 
 static void
@@ -200,7 +199,7 @@ hd_plugin_configuration_finalize (GObject *object)
 
   g_return_if_fail (HD_IS_PLUGIN_CONFIGURATION (object));
 
-  priv = HD_PLUGIN_CONFIGURATION (object)->priv;
+  priv = HD_PLUGIN_CONFIGURATION_GET_PRIVATE (HD_PLUGIN_CONFIGURATION (object));
 
   if (priv->config_file)
     priv->config_file = (g_object_unref (priv->config_file), NULL);
@@ -230,7 +229,8 @@ hd_plugin_configuration_finalize (GObject *object)
 static void
 hd_plugin_configuration_load_configuration (HDPluginConfiguration *configuration)
 {
-  HDPluginConfigurationPrivate *priv = configuration->priv;
+  HDPluginConfigurationPrivate *priv =
+      HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
   GKeyFile *keyfile;
 
   /* load new configuration */
@@ -251,7 +251,8 @@ hd_plugin_configuration_load_configuration (HDPluginConfiguration *configuration
 static void
 hd_plugin_configuration_load_plugin_configuration (HDPluginConfiguration *configuration)
 {
-  HDPluginConfigurationPrivate *priv = configuration->priv;
+  HDPluginConfigurationPrivate *priv =
+      HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
 
   /* Free old plugin configuration */
   if (priv->items_key_file)
@@ -286,7 +287,8 @@ static void
 hd_plugin_configuration_configuration_loaded (HDPluginConfiguration *configuration,
                                               GKeyFile        *keyfile)
 {
-  HDPluginConfigurationPrivate *priv = configuration->priv;
+  HDPluginConfigurationPrivate *priv =
+      HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
   GError *error = NULL;
   gsize n_plugin_dir;
   gchar *items_config_filename;
@@ -438,7 +440,8 @@ hd_plugin_configuration_set_property (GObject      *object,
                                       const GValue *value,
                                       GParamSpec   *pspec)
 {
-  HDPluginConfigurationPrivate *priv= HD_PLUGIN_CONFIGURATION (object)->priv;
+  HDPluginConfigurationPrivate *priv =
+      HD_PLUGIN_CONFIGURATION_GET_PRIVATE (HD_PLUGIN_CONFIGURATION (object));
 
   switch (prop_id)
     {
@@ -462,7 +465,8 @@ hd_plugin_configuration_get_property (GObject      *object,
                                       GValue       *value,
                                       GParamSpec   *pspec)
 {
-  HDPluginConfigurationPrivate *priv = HD_PLUGIN_CONFIGURATION (object)->priv;
+  HDPluginConfigurationPrivate *priv =
+      HD_PLUGIN_CONFIGURATION_GET_PRIVATE (HD_PLUGIN_CONFIGURATION (object));
 
   switch (prop_id)
     {
@@ -617,29 +621,32 @@ hd_plugin_configuration_new (HDConfigFile *config_file)
 void
 hd_plugin_configuration_run (HDPluginConfiguration *configuration)
 {
-  HDPluginConfigurationPrivate *priv;
-
   g_return_if_fail (HD_IS_PLUGIN_CONFIGURATION (configuration));
 
-  priv = configuration->priv;
-
   hd_plugin_configuration_load_configuration (configuration);
-  priv->startup = FALSE;
+  HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration)->startup = FALSE;
 }
 
 GHashTable *
 hd_plugin_configuration_get_available_plugins (HDPluginConfiguration *configuration)
 {
-  return configuration->priv->available_plugins;
+  g_return_val_if_fail (HD_IS_PLUGIN_CONFIGURATION (configuration), NULL);
+
+  return HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration)->available_plugins;
 }
 
 gchar **
 hd_plugin_configuration_get_all_plugin_paths (HDPluginConfiguration *configuration)
 {
-  HDPluginConfigurationPrivate *priv = configuration->priv;
+  HDPluginConfigurationPrivate *priv;
   GHashTableIter iter;
   gpointer key, value;
-  GPtrArray *plugin_paths = g_ptr_array_new ();
+  GPtrArray *plugin_paths;
+
+  g_return_val_if_fail (HD_IS_PLUGIN_CONFIGURATION (configuration), NULL);
+
+  priv = HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
+  plugin_paths = g_ptr_array_new ();
 
   /* Iterate over available plugins */
   g_hash_table_iter_init (&iter, priv->available_plugins);
@@ -667,9 +674,9 @@ hd_plugin_configuration_get_all_plugin_paths (HDPluginConfiguration *configurati
 GKeyFile *
 hd_plugin_configuration_get_items_key_file (HDPluginConfiguration *configuration)
 {
-  HDPluginConfigurationPrivate *priv = configuration->priv;
+  g_return_val_if_fail (HD_IS_PLUGIN_CONFIGURATION (configuration), NULL);
 
-  return priv->items_key_file;
+  return HD_PLUGIN_CONFIGURATION_GET_PRIVATE(configuration)->items_key_file;
 }
 
 /**
@@ -683,9 +690,11 @@ hd_plugin_configuration_get_items_key_file (HDPluginConfiguration *configuration
 gboolean
 hd_plugin_configuration_store_items_key_file (HDPluginConfiguration *configuration)
 {
-  HDPluginConfigurationPrivate *priv = configuration->priv;
+  HDPluginConfigurationPrivate *priv;
 
   g_return_val_if_fail (HD_IS_PLUGIN_CONFIGURATION (configuration), FALSE);
+
+  priv = HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
 
   if (priv->items_config_file)
     return hd_config_file_save_file (priv->items_config_file, priv->items_key_file);
@@ -706,9 +715,7 @@ hd_plugin_configuration_store_items_key_file (HDPluginConfiguration *configurati
 gboolean
 hd_plugin_configuration_get_in_startup (HDPluginConfiguration *configuration)
 {
-  HDPluginConfigurationPrivate *priv = configuration->priv;
-
   g_return_val_if_fail (HD_IS_PLUGIN_CONFIGURATION (configuration), FALSE);
 
-  return priv->startup;
+  return HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration)->startup;
 }
