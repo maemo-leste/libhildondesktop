@@ -71,14 +71,14 @@ G_DEFINE_TYPE (HDConfigFile, hd_config_file, G_TYPE_INITIALLY_UNOWNED);
 
 static void
 hd_config_file_monitored_dir_changed (GFileMonitor      *monitor,
-                                      GFile             *monitor_file,
-                                      GFile             *info,
+                                      GFile             *file,
+                                      GFile             *other_file,
                                       GFileMonitorEvent  event_type,
                                       HDConfigFile      *config_file)
 {
   gchar *basename;
   HDConfigFilePrivate *priv;
-  gchar *info_uri = g_file_get_uri (info);
+  gchar *info_uri = g_file_get_uri (file);
 
   priv = config_file->priv;
 
