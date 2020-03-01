@@ -1,3 +1,11 @@
+libhildondesktop (2.1.45) unstable; urgency=medium
+
+  * Fix segfault on home config file changed (caused by adding a widget)
+  * This version conflicts with a version we have in beowulf, but we're moving
+    to beowulf soon anyway.
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Sun, 01 Mar 2020 02:19:11 +0100
+
 libhildondesktop (2.1.44) unstable; urgency=medium
 
   * GType is not 32 bit on 64 bit system [Ivaylo Dimitrov]
