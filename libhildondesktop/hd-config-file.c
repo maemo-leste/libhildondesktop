@@ -73,14 +73,14 @@ G_DEFINE_TYPE_WITH_PRIVATE (HDConfigFile, hd_config_file, G_TYPE_INITIALLY_UNOWN
 
 static void
 hd_config_file_monitored_dir_changed (GFileMonitor      *monitor,
-                                      GFile             *monitor_file,
-                                      GFile             *info,
+                                      GFile             *file,
+                                      GFile             *other_file,
                                       GFileMonitorEvent  event_type,
                                       HDConfigFile      *config_file)
 {
   gchar *basename;
   HDConfigFilePrivate *priv = HD_CONFIG_FILE_GET_PRIVATE (config_file);
-  gchar *info_uri = g_file_get_uri (info);
+  gchar *info_uri = g_file_get_uri (file);
 
   basename = g_path_get_basename (info_uri);
   if (!strcmp (basename, priv->filename))
