@@ -80,14 +80,12 @@ hd_config_file_monitored_dir_changed (GFileMonitor      *monitor,
 {
   gchar *basename;
   HDConfigFilePrivate *priv = HD_CONFIG_FILE_GET_PRIVATE (config_file);
-  gchar *info_uri = g_file_get_uri (file);
 
-  basename = g_path_get_basename (info_uri);
+  basename = g_file_get_basename (file);
   if (!strcmp (basename, priv->filename))
     {
       g_signal_emit (config_file, signals[CHANGED], 0);
     }
-  g_free (info_uri);
   g_free (basename);
 }
 
