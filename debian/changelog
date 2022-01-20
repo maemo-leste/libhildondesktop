@@ -1,3 +1,10 @@
+libhildondesktop (2.2.3) unstable; urgency=medium
+
+  * Replace g_path_get_basename() with g_file_get_basename()
+  * Process correct .desktop file on plugin add/remove
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Sun, 26 Jan 2020 20:24:28 +0200
+
 libhildondesktop (2.2.2) unstable; urgency=medium
 
   * Fix segmentation fault in config file changed handler, this fixes adding
