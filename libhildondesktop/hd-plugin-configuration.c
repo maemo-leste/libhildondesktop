@@ -107,62 +107,61 @@ hd_plugin_configuration_plugin_dir_changed (GFileMonitor      *monitor,
                                             GFileMonitorEvent  event_type,
                                             HDPluginConfiguration *configuration)
 {
-  gchar *info_uri = g_file_get_uri (info);
+  gchar *path = g_file_get_path (monitor_file);
   HDPluginConfigurationPrivate *priv =
       HD_PLUGIN_CONFIGURATION_GET_PRIVATE (configuration);
-  /*
-  static char* event_string[] = {"changed", "deleted", "startexecuting", "stopexecuting",
-  "created", "metadate-changed"};
 
-  g_debug ("%s. Uri: %s. Event: %s",
-           __FUNCTION__,
-           info_uri,
-           event_string [event_type]);
-           */
+  static const char *event_string[] = {"changed", "changes_done", "deleted",
+                                       "created","attribute_changed",
+                                       "pre-unmount", "unmounted", "moved"};
+
+  g_debug ("%s. path: %s. Event: %s", __FUNCTION__, path,
+           event_type <= G_FILE_MONITOR_EVENT_MOVED ?
+             event_string [event_type] : "unknown");
 
   /* Ignore the temporary dpkg files */
-  if (!g_str_has_suffix (info_uri, ".desktop"))
+  if (!g_str_has_suffix (path, ".desktop"))
     {
-      g_free (info_uri);
+      g_free (path);
       return;
     }
 
   if (event_type == G_FILE_MONITOR_EVENT_CREATED ||
       event_type == G_FILE_MONITOR_EVENT_CHANGED)
     {
-      if (g_hash_table_lookup (priv->available_plugins, info_uri))
+      if (g_hash_table_lookup (priv->available_plugins, path))
         {
-          g_debug ("plugin-updated: %s", info_uri);
+          g_debug ("plugin-updated: %s", path);
 
           g_signal_emit (configuration,
                          plugin_configuration_signals[PLUGIN_MODULE_UPDATED], 0,
-                         info_uri);
+                         path);
         }
       else
         {
-          g_debug ("plugin-added: %s", info_uri);
+          g_debug ("plugin-added: %s", path);
 
           g_hash_table_insert (priv->available_plugins,
-                               g_strdup (info_uri),
+                               g_strdup (path),
                                GUINT_TO_POINTER (1));
 
           g_signal_emit (configuration,
                          plugin_configuration_signals[PLUGIN_MODULE_ADDED], 0,
-                         info_uri);
+                         path);
         }
     }
   else if (event_type == G_FILE_MONITOR_EVENT_DELETED)
     {
-      g_debug ("plugin-removed: %s", info_uri);
+      g_debug ("plugin-removed: %s", path);
 
-      g_hash_table_remove (priv->available_plugins, info_uri);
+      g_hash_table_remove (priv->available_plugins, path);
 
       g_signal_emit (configuration,
                      plugin_configuration_signals[PLUGIN_MODULE_REMOVED], 0,
-                     info_uri);
+                     path);
     }
 
-    g_free (info_uri);
+    g_free (path);
 }
 
 static void
